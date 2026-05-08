@@ -3,117 +3,235 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Harps Tech - Login</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Create Account - Harps Tech</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
-    :root { --primary: #0A192F; --accent: #D4AF37; --white: #FFFFFF; --gray: #8892B0; }
-    body { background: var(--primary); color: var(--white); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .container { background: rgba(255,255,255,0.03); padding: 50px 40px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.2); width: 100%; max-width: 420px; backdrop-filter: blur(15px); }
-    .logo { text-align: center; font-size: 2rem; font-weight: 700; color: var(--accent); margin-bottom: 10px; letter-spacing: 2px; }
-    .subtitle { text-align: center; color: var(--gray); font-size: 0.9rem; margin-bottom: 40px; }
-    h2 { color: var(--white); margin-bottom: 30px; text-align: center; font-size: 1.8rem; font-weight: 600; }
-    input { width: 100%; padding: 14px 16px; margin: 12px 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(136, 146, 176, 0.3); border-radius: 10px; color: var(--white); font-size: 0.95rem; outline: none; }
-    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
-    .btn-primary { width: 100%; padding: 15px; background: var(--accent); color: var(--primary); border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; font-size: 1rem; transition: 0.3s; }
-    .btn-primary:hover { transform: translateY(-2px); }
-    .divider { display: flex; align-items: center; margin: 30px 0; color: var(--gray); font-size: 0.85rem; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(136, 146, 176, 0.3); }
-    .divider span { padding: 0 15px; }
-    .social-login { display: flex; gap: 12px; flex-direction: column; }
-    .btn-social { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(136, 146, 176, 0.3); border-radius: 10px; color: var(--white); cursor: pointer; transition: 0.3s; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .btn-social:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
-    .btn-social svg { width: 20px; height: 20px; }
-    .toggle { text-align: center; margin-top: 25px; color: var(--gray); cursor: pointer; font-size: 0.9rem; }
-    .toggle span { color: var(--accent); font-weight: 600; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0a192f;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .logo {
+      color: #facc15;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .tagline {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    input {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      background: #1e293b;
+      color: #fff;
+      font-size: 16px;
+    }
+    input::placeholder {
+      color: #64748b;
+    }
+    input:focus {
+      outline: none;
+      border-color: #facc15;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: #facc15;
+      color: #0a192f;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-primary:hover {
+      background: #eab308;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: #64748b;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #334155;
+    }
+    .divider span {
+      padding: 0 15px;
+    }
+    .btn-google {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .link {
+      margin-top: 25px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+    .link a {
+      color: #facc15;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .error {
+      color: #f87171;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="logo">HARPS TECH</div>
-    <p class="subtitle">The Future of Reliable Technology</p>
+    <div class="tagline">The Future of Reliable Technology</div>
     
-    <h2 id="formTitle">Create Account</h2>
+    <h1 id="formTitle">Create Account</h1>
     
-    <input type="text" id="name" placeholder="Full Name">
-    <input type="email" id="email" placeholder="Email Address">
-    <input type="password" id="password" placeholder="Password">
+    <div id="errorMsg" class="error"></div>
     
-    <button class="btn-primary" id="mainBtn" onclick="handleAuth()">Create Account</button>
+    <form id="authForm">
+      <input type="text" id="fullname" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="password" id="password" placeholder="Password" required minlength="6">
+      <button type="submit" class="btn-primary" id="submitBtn">Create Account</button>
+    </form>
     
     <div class="divider"><span>or continue with</span></div>
     
-    <div class="social-login">
-      <button class="btn-social" onclick="signInWithGoogle()">
-        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.3-5.7 7.5-11.3 7.5-6.6 0-12-5.4-12-12s5.4-12 12-12c2.7 0 5.2.9 7.2 2.4l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/></svg>
-        Continue with Google
-      </button>
-    </div>
+    <button class="btn-google" id="googleBtn">
+      <svg width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+      </svg>
+      Continue with Google
+    </button>
     
-    <p class="toggle" onclick="toggleForm()">
-      <span id="toggleText">Already have an account? Login</span>
-    </p>
+    <div class="link">
+      <span id="toggleText">Already have an account?</span> <a id="toggleLink">Login</a>
+    </div>
   </div>
 
-  <script>
-    const SUPABASE_URL = 'https://juzntlfeyyvfiojgpeqk.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_SYxulS_L6d27i8ILu5KNKA_Ueikd6Fj';
-    
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const ADMIN_EMAIL = 'okugbepraise@gmail.com';
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
+      authDomain: "harps-tech-95856.firebaseapp.com",
+      projectId: "harps-tech-95856",
+      storageBucket: "harps-tech-95856.firebasestorage.app",
+      messagingSenderId: "937702997468",
+      appId: "1:937702997468:web:ca65a04fa1b026b5506319",
+      measurementId: "G-P7HRDDTXMH"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
     let isLogin = false;
+    const form = document.getElementById('authForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleLink = document.getElementById('toggleLink');
+    const fullnameInput = document.getElementById('fullname');
+    const formTitle = document.getElementById('formTitle');
+    const toggleText = document.getElementById('toggleText');
+    const errorMsg = document.getElementById('errorMsg');
 
-    function toggleForm() {
+    // Toggle between Login and Signup
+    toggleLink.addEventListener('click', (e) => {
+      e.preventDefault();
       isLogin = !isLogin;
-      document.getElementById('formTitle').textContent = isLogin ? 'Welcome Back' : 'Create Account';
-      document.getElementById('name').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('mainBtn').textContent = isLogin ? 'Login' : 'Create Account';
-      document.getElementById('toggleText').innerHTML = isLogin 
-        ? "Don't have an account? <span>Create Account</span>" 
-        : "Already have an account? <span>Login</span>";
-    }
+      formTitle.textContent = isLogin ? 'Login' : 'Create Account';
+      submitBtn.textContent = isLogin ? 'Login' : 'Create Account';
+      fullnameInput.style.display = isLogin ? 'none' : 'block';
+      toggleText.textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+      toggleLink.textContent = isLogin ? 'Create Account' : 'Login';
+      errorMsg.textContent = '';
+    });
 
-    async function handleAuth() {
-      const name = document.getElementById('name').value;
+    // Handle form submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.textContent = '';
+      
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const fullname = document.getElementById('fullname').value;
+
+      submitBtn.textContent = "Loading...";
+      submitBtn.disabled = true;
 
       try {
         if (isLogin) {
-          const { error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          window.location.href = email === ADMIN_EMAIL ? 'admin.html' : 'dashboard.html';
+          await signInWithEmailAndPassword(auth, email, password);
+          alert("Login successful!");
         } else {
-          if (!name) throw new Error('Please enter your full name');
-          const { error } = await supabase.auth.signUp({ 
-            email: email, 
-            password: password,
-            options: { 
-              data: { 
-                full_name: name 
-              }
-            }
-          });
-          if (error) throw error;
-          alert('Account created! Check your email for verification link.');
+          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+          await updateProfile(userCred.user, { displayName: fullname });
+          alert("Account created successfully!");
         }
+        window.location.href = "dashboard.html";
       } catch (error) {
-        alert(error.message);
+        errorMsg.textContent = error.message;
+      } finally {
+        submitBtn.textContent = isLogin ? 'Login' : 'Create Account';
+        submitBtn.disabled = false;
       }
-    }
+    });
 
-    async function signInWithGoogle() {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/dashboard.html' }
-      });
-      if (error) alert(error.message);
-    }
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        window.location.href = session.user.email === ADMIN_EMAIL ? 'admin.html' : 'dashboard.html';
-      }
+    // Google button - disabled until billing is set
+    document.getElementById('googleBtn').addEventListener('click', () => {
+      alert("Google login needs billing setup. Use email/password for now.");
     });
   </script>
 </body>
