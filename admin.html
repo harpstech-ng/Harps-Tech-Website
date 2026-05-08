@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Harps Tech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; color: #fff; font-family: 'Outfit', sans-serif; }
+    .tab-active { background: #06b6d4; color: #0f172a; }
+    .tab { padding: 12px 24px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .tab:hover { background: #1e293b; }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-slate-800 p-8 rounded-2xl max-w-md w-full">
+      <h1 class="text-3xl font-bold mb-6 text-center">Admin Login</h1>
+      <div id="loginError" class="hidden mb-4 p-3 bg-red-900/30 text-red-400 rounded-lg"></div>
+      <input type="email" id="adminEmail" placeholder="Admin Email" value="okugbepraise@gmail.com" 
+             class="w-full bg-slate-700 border-slate-600 p-3 rounded-xl mb-4 outline-none focus:border-cyan-500">
+      <input type="password" id="adminPass" placeholder="Password" 
+             class="w-full bg-slate-700 border-slate-600 p-3 rounded-xl mb-4 outline-none focus:border-cyan-500">
+      <button id="adminLoginBtn" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-3 rounded-xl">
+        Login
+      </button>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="adminPanel" class="hidden">
+    <nav class="bg-slate-900 border-b border-slate-700 p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Harps Tech Admin</h1>
+      <div class="flex items-center gap-4">
+        <span id="adminEmailDisplay" class="text-gray-400"></span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Logout</button>
+      </div>
+    </nav>
+
+    <div class="p-6">
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-6 overflow-x-auto">
+        <div class="tab tab-active" data-tab="orders">Orders</div>
+        <div class="tab" data-tab="users">Users</div>
+        <div class="tab" data-tab="chats">Chats</div>
+        <div class="tab" data-tab="topups">Top-up Requests</div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div id="ordersTab" class="tab-content">
+        <h2 class="text-xl font-bold mb-4">Recent Orders</h2>
+        <div id="ordersList" class="space-y-3"></div>
+      </div>
+
+      <!-- Users Tab -->
+      <div id="usersTab" class="tab-content hidden">
+        <h2 class="text-xl font-bold mb-4">Users</h2>
+        <div id="usersList" class="space-y-3"></div>
+      </div>
+
+      <!-- Chats Tab -->
+      <div id="chatsTab" class="tab-content hidden">
+        <h2 class="text-xl font-bold mb-4">Customer Chats</h2>
+        <div id="chatsList" class="grid md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- Topups Tab -->
+      <div id="topupsTab" class="tab-content hidden">
+        <h2 class="text-xl font-bold mb-4">Pending Top-up Requests</h2>
+        <div id="topupsList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
+      authDomain: "harps-tech-95856.firebaseapp.com",
+      projectId: "harps-tech-95856",
+      storageBucket: "harps-tech-95856.firebasestorage.app",
+      messagingSenderId: "937702997468",
+      appId: "1:937702997468:web:ca65a04fa1b026b5506319",
+      measurementId: "G-P7HRDDTXMH"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const ADMIN_EMAIL = "okugbepraise@gmail.com";
+
+    // Login
+    document.getElementById('adminLoginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('adminEmail').value;
+      const pass = document.getElementById('adminPass').value;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        document.getElementById('loginError').textContent = err.message;
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    });
+
+    // Auth State
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email === ADMIN_EMAIL) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('adminEmailDisplay').textContent = user.email;
+        loadData();
+      } else if (user) {
+        alert('Access denied. Not admin account.');
+        signOut(auth);
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+    // Tab Switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+        tab.classList.add('tab-active');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(tab.dataset.tab + 'Tab').classList.remove('hidden');
+      });
+    });
+
+    // Load Data
+    function loadData() {
+      // Orders
+      onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snap) => {
+        document.getElementById('ordersList').innerHTML = snap.docs.map(doc => {
+          const d = doc.data();
+          return `
+            <div class="bg-slate-800 p-4 rounded-xl">
+              <div class="flex justify-between">
+                <div>
+                  <p class="font-bold">${d.serviceId}</p>
+                  <p class="text-sm text-gray-400">${d.email} | ₦${d.priceNGN}</p>
+                  <p class="text-xs text-gray-500">${d.link || ''}</p>
+                </div>
+                <div class="text-right">
+                  <span class="px-3 py-1 rounded-full text-xs ${d.status==='pending'?'bg-yellow-900/30 text-yellow-400':'bg-green-900/30 text-green-400'}">${d.status}</span>
+                  <button onclick="updateOrder('${doc.id}','completed')" class="block mt-2 text-xs text-cyan-400 hover:underline">Mark Complete</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+
+      // Users
+      onSnapshot(collection(db, "users"), (snap) => {
+        document.getElementById('usersList').innerHTML = snap.docs.map(doc => {
+          const d = doc.data();
+          return `
+            <div class="bg-slate-800 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <p class="font-bold">${d.name || 'No Name'}</p>
+                <p class="text-sm text-gray-400">${d.email}</p>
+                <p class="text-sm text-cyan-400">Balance: ₦${d.balance || 0}</p>
+              </div>
+              <button onclick="addBalance('${doc.id}')" class="bg-cyan-600 px-4 py-2 rounded-lg text-sm">Add Balance</button>
+            </div>
+          `;
+        }).join('');
+      });
+
+      // Chats
+      onSnapshot(collection(db, "chats"), (snap) => {
+        const grouped = {};
+        snap.docs.forEach(doc => {
+          const d = doc.data();
+          if (!grouped[d.uid]) grouped[d.uid] = [];
+          grouped[d.uid].push(d);
+        });
+        
+        document.getElementById('chatsList').innerHTML = Object.keys(grouped).map(uid => {
+          const msgs = grouped[uid];
+          const lastMsg = msgs[msgs.length-1];
+          return `
+            <div class="bg-slate-800 p-4 rounded-xl">
+              <p class="font-bold">${lastMsg.email}</p>
+              <p class="text-sm text-gray-400 mb-3">${lastMsg.message}</p>
+              <input type="text" id="reply_${uid}" placeholder="Reply..." class="w-full bg-slate-700 p-2 rounded-lg mb-2">
+              <button onclick="replyChat('${uid}','${lastMsg.email}')" class="w-full bg-cyan-600 py-2 rounded-lg">Send Reply</button>
+            </div>
+          `;
+        }).join('');
+      });
+
+      // Topups
+      onSnapshot(query(collection(db, "topup_requests"), where("status","==","pending")), (snap) => {
+        document.getElementById('topupsList').innerHTML = snap.docs.map(doc => {
+          const d = doc.data();
+          return `
+            <div class="bg-slate-800 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                <p class="font-bold">${d.email}</p>
+                <p class="text-cyan-400">₦${d.amount}</p>
+                <p class="text-sm text-gray-400">${d.note || 'No note'}</p>
+              </div>
+              <button onclick="approveTopup('${doc.id}','${d.uid}',${d.amount})" class="bg-green-600 px-4 py-2 rounded-lg">Approve</button>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    // Actions
+    window.updateOrder = async (id, status) => {
+      await updateDoc(doc(db, "orders", id), { status });
+    };
+
+    window.approveTopup = async (reqId, uid, amount) => {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { balance: amount });
+      await updateDoc(doc(db, "topup_requests", reqId), { status: 'approved' });
+      alert('Balance approved!');
+    };
+
+    window.addBalance = async (uid) => {
+      const amount = prompt('Enter amount to add in NGN:');
+      if (amount) {
+        const userRef = doc(db, "users", uid);
+        await updateDoc(userRef, { balance: parseFloat(amount) });
+      }
+    };
+
+    window.replyChat = async (uid, email) => {
+      const msg = document.getElementById(`reply_${uid}`).value;
+      if (!msg) return;
+      await addDoc(collection(db, "chats"), {
+        uid, email, message: msg, sender: 'admin', createdAt: new Date()
+      });
+      document.getElementById(`reply_${uid}`).value = '';
+    };
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
