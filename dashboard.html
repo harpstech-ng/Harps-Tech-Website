@@ -9,14 +9,15 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { background-color: #050505; color: #fff; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-       .glass-nav { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-       .hero-gradient { background: radial-gradient(circle at 50% 50%, rgba(0, 232, 255, 0.1) 0%, transparent 70%); }
+       .glass-nav { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+       .hero-gradient { background: radial-gradient(circle at 30% 50%, rgba(0, 232, 255, 0.15) 0%, transparent 60%); }
        .service-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; }
        .service-card:hover { border-color: #00E8FF; transform: translateY(-5px); background: rgba(0, 232, 255, 0.02); }
-       .btn-premium { background: linear-gradient(90deg, #00E8FF, #0072FF); transition: transform 0.2s; }
-       .btn-premium:hover { transform: scale(1.05); }
+       .btn-premium { background: linear-gradient(90deg, #00E8FF, #0072FF); transition: all 0.2s; }
+       .btn-premium:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 232, 255, 0.4); }
        .modal { display: none; }
        .modal.active { display: flex; }
+       .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
     </style>
 </head>
 <body>
@@ -28,13 +29,15 @@
                 <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center font-bold text-black">H</div>
                 <span class="text-2xl font-extrabold tracking-tighter uppercase">HARPS <span class="text-cyan-400">TECH</span></span>
             </div>
-            <div class="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-gray-400">
-                <a href="#services" class="hover:text-cyan-400 transition">Marketplace</a>
-                <a href="#portfolio" class="hover:text-cyan-400 transition">AI Lab</a>
-                <a href="#about" class="hover:text-cyan-400 transition">Agency</a>
-                <a href="#contact" class="hover:text-cyan-400 transition">Contact</a>
+
+            <div class="hidden lg:flex gap-8 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <a href="#dashboard" class="hover:text-cyan-400 transition">Dashboard</a>
+                <a href="#services" class="hover:text-cyan-400 transition">Services</a>
+                <a href="#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="#support" class="hover:text-cyan-400 transition">Support</a>
             </div>
-            <div class="flex items-center gap-4">
+
+            <div class="flex items-center gap-3">
                 <select class="bg-black/50 border-white/10 rounded-lg px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
                     <option value="NGN">₦ NGN</option>
                     <option value="USD">$ USD</option>
@@ -59,26 +62,40 @@
         </div>
     </nav>
 
-    <!-- Hero Section with Balance -->
-    <header class="relative min-h-screen flex items-center pt-32 hero-gradient">
+    <!-- Hero / Dashboard Section -->
+    <section id="dashboard" class="relative min-h-screen flex items-center pt-32 hero-gradient">
         <div class="max-w-7xl mx-auto px-6 w-full">
             <div class="mb-12">
-                <div class="inline-block px-4 py-1 border border-cyan-500/30 rounded-full text-cyan-400 text- font-bold tracking-widest uppercase mb-6">
-                    Welcome, <span id="userName">User</span>
+                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
+                    Welcome back, <span id="userName">User</span>
                 </div>
-                <h1 class="text-6xl md:text-8xl font-extrabold leading-none mb-6 uppercase tracking-tighter">
-                    Your <br> <span class="italic font-light text-gray-400 font-['Playfair_Display']">Dashboard.</span>
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-none mb-6 uppercase tracking-tighter">
+                    Your <br> <span class="italic font-light text-gray-400 font-['Playfair_Display']">Control Center.</span>
                 </h1>
             </div>
 
-            <!-- Balance Card -->
-            <div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl p-8 md:p-12 mb-16">
-                <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
-                <h2 class="text-5xl md:text-7xl font-extrabold text-black" id="balance">₦0.00</h2>
-                <p class="text-black/60 text-sm mt-4">Contact support to top up. Balance is stored in NGN.</p>
+            <!-- Balance + Quick Actions -->
+            <div class="grid lg:grid-cols-3 gap-6 mb-16">
+                <div class="lg:col-span-2 balance-card rounded-3xl p-8 md:p-12">
+                    <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
+                    <h2 class="text-5xl md:text-6xl font-extrabold text-black" id="balance">₦0.00</h2>
+                    <p class="text-black/60 text-sm mt-4">Balance is in NGN. Use the dropdown to convert. Contact support to top up.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})" class="w-full btn-premium text-black font-bold py-4 rounded-xl">
+                        Browse Services
+                    </button>
+                    <button onclick="document.getElementById('support').scrollIntoView({behavior:'smooth'})" class="w-full border-white/20 hover:bg-white/5 text-white font-bold py-4 rounded-xl transition">
+                        Contact Support
+                    </button>
+                    <button id="requestTopupBtn" class="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-xl transition">
+                        Request Top Up
+                    </button>
+                </div>
             </div>
 
-            <!-- Quick Stats -->
+            <!-- User Info Cards -->
             <div class="grid md:grid-cols-3 gap-6 mb-16">
                 <div class="service-card p-6 rounded-2xl">
                     <i data-lucide="mail" class="text-cyan-400 mb-3 w-5 h-5"></i>
@@ -97,49 +114,67 @@
                 </div>
             </div>
         </div>
-    </header>
+    </section>
 
     <!-- Services Marketplace -->
     <section id="services" class="py-24 px-6 bg-[#080808]">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                <div>
-                    <h2 class="text-4xl font-bold uppercase tracking-tighter">The <span class="text-cyan-400">Marketplace</span></h2>
-                    <p class="text-gray-500 mt-2">Select a high-performance service to scale your digital presence.</p>
-                </div>
-                <div class="flex gap-2">
-                    <span class="px-4 py-2 bg-cyan-500/10 text-cyan-400 text- font-bold rounded-lg border-cyan-500/20">SHOPRIME VERIFIED</span>
-                    <span class="px-4 py-2 bg-white/5 text-gray-400 text- font-bold rounded-lg border-white/5">AI AUTOMATION</span>
-                </div>
+            <div class="mb-16">
+                <h2 class="text-4xl font-bold uppercase tracking-tighter">The <span class="text-cyan-400">Marketplace</span></h2>
+                <p class="text-gray-500 mt-2">Click any service to request it. We'll contact you with pricing and delivery time.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="service-card p-6 rounded-2xl relative overflow-hidden group">
+                <div class="service-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer" data-service="Social Growth">
                     <i data-lucide="trending-up" class="text-cyan-400 mb-4 w-5 h-5"></i>
                     <h3 class="font-bold text-lg mb-1">Social Growth</h3>
                     <p class="text-gray-500 text-xs mb-4">TikTok, IG, YT, Twitter, FB Boosts via Shoprime.</p>
                     <div class="text-cyan-400 font-bold text-sm">$0.02 - $45.00</div>
+                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition request-service">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    </button>
                 </div>
 
-                <div class="service-card p-6 rounded-2xl relative overflow-hidden group border-cyan-900/50">
+                <div class="service-card p-6 rounded-2xl relative overflow-hidden group border-cyan-900/50 cursor-pointer" data-service="WhatsApp AI Pro">
                     <i data-lucide="bot" class="text-cyan-400 mb-4 w-5 h-5"></i>
                     <h3 class="font-bold text-lg mb-1">WhatsApp AI Pro</h3>
                     <p class="text-gray-500 text-xs mb-4">Custom Baileys-driven bots with Gemini AI.</p>
                     <div class="text-cyan-400 font-bold text-sm">Custom Quote</div>
+                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition request-service">
+                        <i data-lucide="code" class="w-4 h-4"></i>
+                    </button>
                 </div>
 
-                <div class="service-card p-6 rounded-2xl">
+                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Security Audits">
                     <i data-lucide="shield-check" class="text-cyan-400 mb-4 w-5 h-5"></i>
                     <h3 class="font-bold text-lg mb-1">Security Audits</h3>
                     <p class="text-gray-500 text-xs mb-4">Code vulnerability testing and API hardening.</p>
                     <div class="text-cyan-400 font-bold text-sm">Professional</div>
+                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
                 </div>
 
-                <div class="service-card p-6 rounded-2xl">
+                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Custom Coding">
                     <i data-lucide="code" class="text-cyan-400 mb-4 w-5 h-5"></i>
                     <h3 class="font-bold text-lg mb-1">Custom Coding</h3>
                     <p class="text-gray-500 text-xs mb-4">Web apps, bots, automation scripts.</p>
                     <div class="text-cyan-400 font-bold text-sm">From ₦50k</div>
+                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
+                </div>
+
+                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Branding & Design">
+                    <i data-lucide="palette" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <h3 class="font-bold text-lg mb-1">Branding & Design</h3>
+                    <p class="text-gray-500 text-xs mb-4">Logo, UI/UX, brand identity packages.</p>
+                    <div class="text-cyan-400 font-bold text-sm">From ₦30k</div>
+                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
+                </div>
+
+                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Automation Setup">
+                    <i data-lucide="zap" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <h3 class="font-bold text-lg mb-1">Automation Setup</h3>
+                    <p class="text-gray-500 text-xs mb-4">Workflow automation, API integrations.</p>
+                    <div class="text-cyan-400 font-bold text-sm">From ₦20k</div>
+                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
                 </div>
             </div>
         </div>
@@ -151,7 +186,7 @@
             <h2 class="text-cyan-500 font-mono text-xs tracking-[0.5em] uppercase mb-6">// The Agency</h2>
             <h3 class="text-5xl font-bold mb-8 uppercase tracking-tighter">Engineering <span class="italic font-light text-gray-500">Without Limits.</span></h3>
             <p class="text-xl text-gray-400 leading-relaxed font-light mb-12">
-                Harps Tech is a specialized software house focused on the intersection of high-end AI automation and digital marketing. Founded by Praise Okugbe, we leverage mobile-first development environments to build enterprise-grade WhatsApp bots and scalable SMM architectures.
+                Harps Tech is a specialized software house focused on high-end AI automation and digital marketing. Founded by Praise Okugbe, we build enterprise-grade WhatsApp bots, SMM systems, and custom web solutions from mobile-first environments.
             </p>
             <div class="grid grid-cols-3 gap-8 border-y border-white/5 py-12">
                 <div><h4 class="text-3xl font-bold text-white">50+</h4><p class="text-gray-500 text-xs uppercase mt-1">Core Services</p></div>
@@ -161,40 +196,47 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-24 px-6 bg-black relative overflow-hidden">
+    <!-- Support Section -->
+    <section id="support" class="py-24 px-6 bg-black relative overflow-hidden">
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20">
             <div>
-                <h2 class="text-5xl font-bold mb-6 uppercase tracking-tighter">Ready to <br><span class="text-cyan-400">Initialize?</span></h2>
-                <p class="text-gray-400 mb-10">Connect with Praise Okugbe directly for custom development or premium Shoprime services.</p>
+                <h2 class="text-5xl font-bold mb-6 uppercase tracking-tighter">Need <br><span class="text-cyan-400">Help?</span></h2>
+                <p class="text-gray-400 mb-10">Reach out directly. We respond fast on WhatsApp and Email.</p>
                 <div class="space-y-6">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i></div>
-                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Email</p><p class="text-lg">praise@harpstech.pro</p></div>
+                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Email</p><p class="text-lg">okugbepraise@gmail.com</p></div>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i></div>
-                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">WhatsApp</p><p class="text-lg">+234 [Your Number]</p></div>
+                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">WhatsApp</p><p class="text-lg">+234 814 161 2736</p></div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5 text-cyan-400"></i></div>
+                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Response Time</p><p class="text-lg">Usually under 2 hours</p></div>
                     </div>
                 </div>
             </div>
-            <form class="space-y-4" id="contactForm">
-                <input type="text" placeholder="FULL NAME" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition">
-                <input type="email" placeholder="EMAIL ADDRESS" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition">
-                <select class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition text-gray-400">
-                    <option>SELECT SERVICE (AI Automation)</option>
-                    <option>SELECT SERVICE (Shoprime SMM Boost)</option>
-                    <option>SELECT SERVICE (Custom Coding)</option>
+
+            <form id="contactForm" class="space-y-4">
+                <input type="text" id="contactName" placeholder="FULL NAME" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition" required>
+                <input type="email" id="contactEmail" placeholder="EMAIL ADDRESS" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition" required>
+                <select id="contactService" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition text-gray-400">
+                    <option>General Inquiry</option>
+                    <option>Service Request</option>
+                    <option>Top Up Request</option>
+                    <option>Technical Support</option>
                 </select>
-                <textarea rows="4" placeholder="PROJECT BRIEF" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition"></textarea>
-                <button class="w-full btn-premium text-black font-bold py-4 rounded-xl">SEND TRANSMISSION</button>
+                <textarea rows="4" id="contactMessage" placeholder="PROJECT BRIEF" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition" required></textarea>
+                <button type="submit" class="w-full btn-premium text-black font-bold py-4 rounded-xl">SEND MESSAGE</button>
+                <div id="contactMsg" class="hidden p-3 rounded-lg text-sm"></div>
             </form>
         </div>
     </section>
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Account Settings</h3>
                 <button id="closeModal" class="text-gray-500 hover:text-white">
@@ -218,15 +260,37 @@
         </div>
     </div>
 
+    <!-- Top Up Modal -->
+    <div id="topupModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Request Top Up</h3>
+                <button id="closeTopupModal" class="text-gray-500 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <p class="text-gray-400 text-sm mb-4">Send payment to the account below, then submit this form. We'll credit your balance manually within 2 hours.</p>
+            <div class="bg-white/5 p-4 rounded-xl mb-4">
+                <p class="text-xs text-gray-500">Bank: Opay</p>
+                <p class="text-lg font-bold">Account: 8141612736</p>
+                <p class="text-sm">Name: Okugbe Praise</p>
+            </div>
+            <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
+            <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
+            <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
+            <div id="topupMsg" class="hidden mt-3 p-3 rounded-lg text-sm"></div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text- tracking-[0.2em] uppercase">
+    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-xs tracking-[0.2em] uppercase">
         © 2026 HARPS TECH // ARCHITECTED BY PRAISE OKUGBE // ALL SYSTEMS OPERATIONAL
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -258,7 +322,7 @@
         let userBalanceNGN = 0;
         let selectedCurrency = 'NGN';
 
-        // DOM Elements
+        // Elements
         const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
         const userCreated = document.getElementById('userCreated');
@@ -271,6 +335,13 @@
         const changePwBtn = document.getElementById('changePwBtn');
         const newPassword = document.getElementById('newPassword');
         const logoutBtn = document.getElementById('logoutBtn');
+        const requestTopupBtn = document.getElementById('requestTopupBtn');
+        const topupModal = document.getElementById('topupModal');
+        const closeTopupModal = document.getElementById('closeTopupModal');
+        const submitTopup = document.getElementById('submitTopup');
+        const topupMsg = document.getElementById('topupMsg');
+        const contactForm = document.getElementById('contactForm');
+        const contactMsg = document.getElementById('contactMsg');
 
         function updateBalanceDisplay() {
             const converted = userBalanceNGN * rates[selectedCurrency];
@@ -278,7 +349,7 @@
             balanceEl.textContent = `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
-        // Auth State
+        // Auth Check
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -315,27 +386,30 @@
             }
         });
 
-        // Modal Controls
+        // Modals
         settingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
         closeModal.addEventListener('click', () => settingsModal.classList.remove('active'));
         settingsModal.addEventListener('click', (e) => {
             if (e.target === settingsModal) settingsModal.classList.remove('active');
         });
 
+        requestTopupBtn.addEventListener('click', () => topupModal.classList.add('active'));
+        closeTopupModal.addEventListener('click', () => topupModal.classList.remove('active'));
+        topupModal.addEventListener('click', (e) => {
+            if (e.target === topupModal) topupModal.classList.remove('active');
+        });
+
         // Change Password
         changePwBtn.addEventListener('click', async () => {
             const password = newPassword.value;
             pwMsg.className = 'hidden mb-3 p-3 rounded-lg text-sm';
-
             if (password.length < 6) {
                 pwMsg.textContent = 'Password must be at least 6 characters';
                 pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
                 return;
             }
-
             changePwBtn.disabled = true;
             changePwBtn.textContent = 'Updating...';
-
             try {
                 await updatePassword(auth.currentUser, password);
                 pwMsg.textContent = 'Password updated successfully!';
@@ -356,7 +430,67 @@
             window.location.href = "login.html";
         });
 
-        // Init Lucide Icons
+        // Submit Top Up Request
+        submitTopup.addEventListener('click', async () => {
+            const amount = document.getElementById('topupAmount').value;
+            const note = document.getElementById('topupNote').value;
+            if (!amount || amount <= 0) {
+                topupMsg.textContent = 'Enter a valid amount';
+                topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
+                return;
+            }
+            try {
+                await addDoc(collection(db, "topup_requests"), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: parseFloat(amount),
+                    note: note,
+                    status: 'pending',
+                    createdAt: new Date()
+                });
+                topupMsg.textContent = 'Request sent! Check WhatsApp/Email for confirmation.';
+                topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
+                document.getElementById('topupAmount').value = '';
+                document.getElementById('topupNote').value = '';
+            } catch (err) {
+                topupMsg.textContent = 'Error sending request. Try WhatsApp directly.';
+                topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
+            }
+        });
+
+        // Service Request Buttons
+        document.querySelectorAll('.request-service').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const service = e.target.closest('[data-service]').getAttribute('data-service');
+                document.getElementById('support').scrollIntoView({behavior: 'smooth'});
+                document.getElementById('contactService').value = 'Service Request';
+                document.getElementById('contactMessage').value = `I'm interested in: ${service}\n\nDetails:`;
+            });
+        });
+
+        // Contact Form
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const service = document.getElementById('contactService').value;
+            const message = document.getElementById('contactMessage').value;
+
+            try {
+                await addDoc(collection(db, "messages"), {
+                    name, email, service, message,
+                    userId: currentUser? currentUser.uid : null,
+                    createdAt: new Date()
+                });
+                contactMsg.textContent = 'Message sent! I\'ll reply on WhatsApp or Email.';
+                contactMsg.className = 'p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
+                contactForm.reset();
+            } catch (err) {
+                contactMsg.textContent = 'Error sending message. Contact me on WhatsApp.';
+                contactMsg.className = 'p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
+            }
+        });
+
         lucide.createIcons();
 
         // Smooth scrolling
