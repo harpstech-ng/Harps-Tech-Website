@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harps Tech | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Playfair+Display:italic,wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #050505; color: #fff; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+       .glass-nav { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+       .hero-gradient { background: radial-gradient(circle at 50% 50%, rgba(0, 232, 255, 0.1) 0%, transparent 70%); }
+       .service-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; }
+       .service-card:hover { border-color: #00E8FF; transform: translateY(-5px); background: rgba(0, 232, 255, 0.02); }
+       .btn-premium { background: linear-gradient(90deg, #00E8FF, #0072FF); transition: transform 0.2s; }
+       .btn-premium:hover { transform: scale(1.05); }
+       .modal { display: none; }
+       .modal.active { display: flex; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center font-bold text-black">H</div>
+                <span class="text-2xl font-extrabold tracking-tighter uppercase">HARPS <span class="text-cyan-400">TECH</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <a href="#services" class="hover:text-cyan-400 transition">Marketplace</a>
+                <a href="#portfolio" class="hover:text-cyan-400 transition">AI Lab</a>
+                <a href="#about" class="hover:text-cyan-400 transition">Agency</a>
+                <a href="#contact" class="hover:text-cyan-400 transition">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <select class="bg-black/50 border-white/10 rounded-lg px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
+                    <option value="NGN">₦ NGN</option>
+                    <option value="USD">$ USD</option>
+                    <option value="EUR">€ EUR</option>
+                    <option value="GBP">£ GBP</option>
+                    <option value="GHS">₵ GHS</option>
+                    <option value="ZAR">R ZAR</option>
+                    <option value="KES">KSh KES</option>
+                    <option value="CAD">C$ CAD</option>
+                    <option value="AUD">A$ AUD</option>
+                    <option value="JPY">¥ JPY</option>
+                    <option value="CNY">¥ CNY</option>
+                    <option value="INR">₹ INR</option>
+                    <option value="AED">د.إ AED</option>
+                    <option value="SAR">﷼ SAR</option>
+                    <option value="TRY">₺ TRY</option>
+                </select>
+                <button id="settingsBtn" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Balance -->
+    <header class="relative min-h-screen flex items-center pt-32 hero-gradient">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="mb-12">
+                <div class="inline-block px-4 py-1 border border-cyan-500/30 rounded-full text-cyan-400 text- font-bold tracking-widest uppercase mb-6">
+                    Welcome, <span id="userName">User</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-extrabold leading-none mb-6 uppercase tracking-tighter">
+                    Your <br> <span class="italic font-light text-gray-400 font-['Playfair_Display']">Dashboard.</span>
+                </h1>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl p-8 md:p-12 mb-16">
+                <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
+                <h2 class="text-5xl md:text-7xl font-extrabold text-black" id="balance">₦0.00</h2>
+                <p class="text-black/60 text-sm mt-4">Contact support to top up. Balance is stored in NGN.</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid md:grid-cols-3 gap-6 mb-16">
+                <div class="service-card p-6 rounded-2xl">
+                    <i data-lucide="mail" class="text-cyan-400 mb-3 w-5 h-5"></i>
+                    <p class="text-gray-500 text-xs uppercase">Email</p>
+                    <p class="text-lg font-semibold" id="userEmail">Loading...</p>
+                </div>
+                <div class="service-card p-6 rounded-2xl">
+                    <i data-lucide="calendar" class="text-cyan-400 mb-3 w-5 h-5"></i>
+                    <p class="text-gray-500 text-xs uppercase">Member Since</p>
+                    <p class="text-lg font-semibold" id="userCreated">Loading...</p>
+                </div>
+                <div class="service-card p-6 rounded-2xl">
+                    <i data-lucide="shield-check" class="text-cyan-400 mb-3 w-5 h-5"></i>
+                    <p class="text-gray-500 text-xs uppercase">Account Status</p>
+                    <p class="text-lg font-semibold text-green-400">Active</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Services Marketplace -->
+    <section id="services" class="py-24 px-6 bg-[#080808]">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-4xl font-bold uppercase tracking-tighter">The <span class="text-cyan-400">Marketplace</span></h2>
+                    <p class="text-gray-500 mt-2">Select a high-performance service to scale your digital presence.</p>
+                </div>
+                <div class="flex gap-2">
+                    <span class="px-4 py-2 bg-cyan-500/10 text-cyan-400 text- font-bold rounded-lg border-cyan-500/20">SHOPRIME VERIFIED</span>
+                    <span class="px-4 py-2 bg-white/5 text-gray-400 text- font-bold rounded-lg border-white/5">AI AUTOMATION</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="service-card p-6 rounded-2xl relative overflow-hidden group">
+                    <i data-lucide="trending-up" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <h3 class="font-bold text-lg mb-1">Social Growth</h3>
+                    <p class="text-gray-500 text-xs mb-4">TikTok, IG, YT, Twitter, FB Boosts via Shoprime.</p>
+                    <div class="text-cyan-400 font-bold text-sm">$0.02 - $45.00</div>
+                </div>
+
+                <div class="service-card p-6 rounded-2xl relative overflow-hidden group border-cyan-900/50">
+                    <i data-lucide="bot" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <h3 class="font-bold text-lg mb-1">WhatsApp AI Pro</h3>
+                    <p class="text-gray-500 text-xs mb-4">Custom Baileys-driven bots with Gemini AI.</p>
+                    <div class="text-cyan-400 font-bold text-sm">Custom Quote</div>
+                </div>
+
+                <div class="service-card p-6 rounded-2xl">
+                    <i data-lucide="shield-check" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <h3 class="font-bold text-lg mb-1">Security Audits</h3>
+                    <p class="text-gray-500 text-xs mb-4">Code vulnerability testing and API hardening.</p>
+                    <div class="text-cyan-400 font-bold text-sm">Professional</div>
+                </div>
+
+                <div class="service-card p-6 rounded-2xl">
+                    <i data-lucide="code" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <h3 class="font-bold text-lg mb-1">Custom Coding</h3>
+                    <p class="text-gray-500 text-xs mb-4">Web apps, bots, automation scripts.</p>
+                    <div class="text-cyan-400 font-bold text-sm">From ₦50k</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 px-6 border-t border-white/5">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-cyan-500 font-mono text-xs tracking-[0.5em] uppercase mb-6">// The Agency</h2>
+            <h3 class="text-5xl font-bold mb-8 uppercase tracking-tighter">Engineering <span class="italic font-light text-gray-500">Without Limits.</span></h3>
+            <p class="text-xl text-gray-400 leading-relaxed font-light mb-12">
+                Harps Tech is a specialized software house focused on the intersection of high-end AI automation and digital marketing. Founded by Praise Okugbe, we leverage mobile-first development environments to build enterprise-grade WhatsApp bots and scalable SMM architectures.
+            </p>
+            <div class="grid grid-cols-3 gap-8 border-y border-white/5 py-12">
+                <div><h4 class="text-3xl font-bold text-white">50+</h4><p class="text-gray-500 text-xs uppercase mt-1">Core Services</p></div>
+                <div><h4 class="text-3xl font-bold text-white">24/7</h4><p class="text-gray-500 text-xs uppercase mt-1">Bot Support</p></div>
+                <div><h4 class="text-3xl font-bold text-white">100%</h4><p class="text-gray-500 text-xs uppercase mt-1">Uptime</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 px-6 bg-black relative overflow-hidden">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20">
+            <div>
+                <h2 class="text-5xl font-bold mb-6 uppercase tracking-tighter">Ready to <br><span class="text-cyan-400">Initialize?</span></h2>
+                <p class="text-gray-400 mb-10">Connect with Praise Okugbe directly for custom development or premium Shoprime services.</p>
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i></div>
+                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Email</p><p class="text-lg">praise@harpstech.pro</p></div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i></div>
+                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">WhatsApp</p><p class="text-lg">+234 [Your Number]</p></div>
+                    </div>
+                </div>
+            </div>
+            <form class="space-y-4" id="contactForm">
+                <input type="text" placeholder="FULL NAME" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition">
+                <input type="email" placeholder="EMAIL ADDRESS" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition">
+                <select class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition text-gray-400">
+                    <option>SELECT SERVICE (AI Automation)</option>
+                    <option>SELECT SERVICE (Shoprime SMM Boost)</option>
+                    <option>SELECT SERVICE (Custom Coding)</option>
+                </select>
+                <textarea rows="4" placeholder="PROJECT BRIEF" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition"></textarea>
+                <button class="w-full btn-premium text-black font-bold py-4 rounded-xl">SEND TRANSMISSION</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Account Settings</h3>
+                <button id="closeModal" class="text-gray-500 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Change Password</label>
+                    <div id="pwMsg" class="hidden mb-3 p-3 rounded-lg text-sm"></div>
+                    <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
+                    <button id="changePwBtn" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Update Password</button>
+                </div>
+
+                <div class="border-t border-white/10 pt-6">
+                    <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Session</label>
+                    <button id="logoutBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text- tracking-[0.2em] uppercase">
+        © 2026 HARPS TECH // ARCHITECTED BY PRAISE OKUGBE // ALL SYSTEMS OPERATIONAL
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
+            authDomain: "harps-tech-95856.firebaseapp.com",
+            projectId: "harps-tech-95856",
+            storageBucket: "harps-tech-95856.firebasestorage.app",
+            messagingSenderId: "937702997468",
+            appId: "1:937702997468:web:ca65a04fa1b026b5506319",
+            measurementId: "G-P7HRDDTXMH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const rates = {
+            NGN: 1, USD: 0.0012, EUR: 0.0011, GBP: 0.00095, GHS: 0.015, ZAR: 0.022,
+            KES: 0.17, CAD: 0.0016, AUD: 0.0018, JPY: 0.18, CNY: 0.0087, INR: 0.10,
+            AED: 0.0044, SAR: 0.0045, TRY: 0.038
+        };
+
+        const currencySymbols = {
+            NGN: '₦', USD: '$', EUR: '€', GBP: '£', GHS: '₵', ZAR: 'R',
+            KES: 'KSh', CAD: 'C$', AUD: 'A$', JPY: '¥', CNY: '¥',
+            INR: '₹', AED: 'د.إ', SAR: '﷼', TRY: '₺'
+        };
+
+        let currentUser = null;
+        let userBalanceNGN = 0;
+        let selectedCurrency = 'NGN';
+
+        // DOM Elements
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const userCreated = document.getElementById('userCreated');
+        const balanceEl = document.getElementById('balance');
+        const currencySelect = document.getElementById('currencySelect');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeModal = document.getElementById('closeModal');
+        const pwMsg = document.getElementById('pwMsg');
+        const changePwBtn = document.getElementById('changePwBtn');
+        const newPassword = document.getElementById('newPassword');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        function updateBalanceDisplay() {
+            const converted = userBalanceNGN * rates[selectedCurrency];
+            const symbol = currencySymbols[selectedCurrency];
+            balanceEl.textContent = `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Auth State
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                userName.textContent = user.displayName || 'User';
+                userEmail.textContent = user.email;
+                userCreated.textContent = new Date(user.metadata.creationTime).toLocaleDateString();
+
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    userBalanceNGN = userDoc.data().balance || 0;
+                    selectedCurrency = userDoc.data().currency || 'NGN';
+                    currencySelect.value = selectedCurrency;
+                } else {
+                    await setDoc(doc(db, "users", user.uid), {
+                        email: user.email,
+                        name: user.displayName || "",
+                        balance: 0,
+                        currency: 'NGN',
+                        createdAt: new Date()
+                    });
+                }
+                updateBalanceDisplay();
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // Currency Change
+        currencySelect.addEventListener('change', async (e) => {
+            selectedCurrency = e.target.value;
+            updateBalanceDisplay();
+            if (currentUser) {
+                await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
+            }
+        });
+
+        // Modal Controls
+        settingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
+        closeModal.addEventListener('click', () => settingsModal.classList.remove('active'));
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) settingsModal.classList.remove('active');
+        });
+
+        // Change Password
+        changePwBtn.addEventListener('click', async () => {
+            const password = newPassword.value;
+            pwMsg.className = 'hidden mb-3 p-3 rounded-lg text-sm';
+
+            if (password.length < 6) {
+                pwMsg.textContent = 'Password must be at least 6 characters';
+                pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
+                return;
+            }
+
+            changePwBtn.disabled = true;
+            changePwBtn.textContent = 'Updating...';
+
+            try {
+                await updatePassword(auth.currentUser, password);
+                pwMsg.textContent = 'Password updated successfully!';
+                pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
+                newPassword.value = '';
+            } catch (error) {
+                pwMsg.textContent = error.message;
+                pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
+            } finally {
+                changePwBtn.disabled = false;
+                changePwBtn.textContent = 'Update Password';
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = "login.html";
+        });
+
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
