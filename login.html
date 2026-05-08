@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,15 +86,15 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .error, .success {
+    .msg {
       font-size: 14px;
       margin-bottom: 15px;
       padding: 10px;
       border-radius: 8px;
       display: none;
     }
-    .error { color: #f87171; background: #7f1d1d33; display: block; }
-    .success { color: #4ade80; background: #14532d33; display: block; }
+    .msg.error { color: #f87171; background: #7f1d1d33; display: block; }
+    .msg.success { color: #4ade80; background: #14532d33; display: block; }
   </style>
 </head>
 <body>
@@ -103,10 +104,10 @@
     
     <h1 id="formTitle">Create Account</h1>
     
-    <div id="msg" class="error"></div>
+    <div id="msg" class="msg"></div>
     
     <form id="authForm">
-      <input type="text" id="fullname" placeholder="Full Name" required>
+      <input type="text" id="fullname" placeholder="Full Name">
       <input type="email" id="email" placeholder="Email Address" required>
       <input type="password" id="password" placeholder="Password" required minlength="6">
       <div class="forgot"><a id="forgotLink">Forgot Password?</a></div>
@@ -151,18 +152,35 @@
     const msg = document.getElementById('msg');
     const forgotLink = document.getElementById('forgotLink');
 
+    function setMode(loginMode) {
+      isLogin = loginMode;
+      formTitle.textContent = isLogin ? 'Login' : 'Create Account';
+      submitBtn.textContent = isLogin ? 'Login' : 'Create Account';
+      toggleText.textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+      toggleLink.textContent = isLogin ? 'Create Account' : 'Login';
+      
+      // Key fix: remove required attribute in login mode
+      if (isLogin) {
+        fullnameInput.style.display = 'none';
+        fullnameInput.removeAttribute('required');
+        forgotLink.style.display = 'block';
+      } else {
+        fullnameInput.style.display = 'block';
+        fullnameInput.setAttribute('required', '');
+        forgotLink.style.display = 'none';
+      }
+      
+      msg.textContent = '';
+      msg.className = 'msg';
+    }
+
+    // Start in signup mode
+    setMode(false);
+
     // Toggle Login/Signup
     toggleLink.addEventListener('click', (e) => {
       e.preventDefault();
-      isLogin = !isLogin;
-      formTitle.textContent = isLogin ? 'Login' : 'Create Account';
-      submitBtn.textContent = isLogin ? 'Login' : 'Create Account';
-      fullnameInput.style.display = isLogin ? 'none' : 'block';
-      forgotLink.style.display = isLogin ? 'block' : 'none';
-      toggleText.textContent = isLogin ? "Don't have an account?" : "Already have an account?";
-      toggleLink.textContent = isLogin ? 'Create Account' : 'Login';
-      msg.textContent = '';
-      msg.className = 'error';
+      setMode(!isLogin);
     });
 
     // Forgot Password
@@ -170,16 +188,16 @@
       const email = document.getElementById('email').value;
       if (!email) {
         msg.textContent = 'Enter your email first';
-        msg.className = 'error';
+        msg.className = 'msg error';
         return;
       }
       try {
         await sendPasswordResetEmail(auth, email);
         msg.textContent = 'Password reset email sent. Check your inbox.';
-        msg.className = 'success';
+        msg.className = 'msg success';
       } catch (error) {
         msg.textContent = error.message;
-        msg.className = 'error';
+        msg.className = 'msg error';
       }
     });
 
@@ -187,6 +205,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       msg.textContent = '';
+      msg.className = 'msg';
       
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
@@ -198,24 +217,19 @@
       try {
         if (isLogin) {
           await signInWithEmailAndPassword(auth, email, password);
-          alert("Login successful!");
         } else {
           const userCred = await createUserWithEmailAndPassword(auth, email, password);
           await updateProfile(userCred.user, { displayName: fullname });
-          alert("Account created successfully!");
         }
         window.location.href = "dashboard.html";
       } catch (error) {
         msg.textContent = error.message;
-        msg.className = 'error';
+        msg.className = 'msg error';
       } finally {
         submitBtn.textContent = isLogin ? 'Login' : 'Create Account';
         submitBtn.disabled = false;
       }
     });
-
-    // Hide forgot link on signup by default
-    forgotLink.style.display = 'none';
   </script>
 </body>
 </html>
