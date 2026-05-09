@@ -317,10 +317,10 @@
                 }
                 
                 allServices = servicesDoc.data().list || [];
-                const activeServices = allServices.filter(s => s.available === true);
                 
-                servicesCount.textContent = `${activeServices.length} active services available`;
-                renderServices(activeServices);
+                // Show all services - removed the available filter
+                servicesCount.textContent = `${allServices.length} services available`;
+                renderServices(allServices);
             } catch (err) {
                 console.error(err);
                 servicesCount.textContent = "Error loading services";
@@ -343,15 +343,18 @@
                     <div class="flex items-center gap-2 mb-1">
                         <h3 class="font-bold text-lg">${service.name}</h3>
                         ${!isAuto ? '<span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">Manual</span>' : ''}
+                        ${service.available === false ? '<span class="text-xs bg-gray-500/20 text-gray-400 px-2 py-1 rounded">Coming Soon</span>' : ''}
                     </div>
                     <p class="text-gray-500 text-xs mb-2">${service.category}</p>
                     <p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max.toLocaleString()}</p>
                     <div class="text-cyan-400 font-bold text-sm">${priceText}</div>
-                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition order-btn">
+                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition order-btn" ${service.available === false ? 'disabled' : ''}>
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                     </button>
                 `;
-                card.querySelector('.order-btn').addEventListener('click', () => openOrderModal(service));
+                if (service.available !== false) {
+                    card.querySelector('.order-btn').addEventListener('click', () => openOrderModal(service));
+                }
                 servicesGrid.appendChild(card);
             });
             lucide.createIcons();
