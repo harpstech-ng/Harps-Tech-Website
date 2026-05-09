@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,6 +36,8 @@ input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid 
     <button onclick="showTab('users')" class="tab-btn">Users</button>
     <button onclick="showTab('orders')" class="tab-btn">Orders</button>
     <button onclick="showTab('topup')" class="tab-btn">Top-ups</button>
+    <button onclick="showTab('invest')" class="tab-btn">Investments</button>
+    <button onclick="showTab('refer')" class="tab-btn">Referrals</button>
     <button onclick="showTab('services')" class="tab-btn">Services</button>
     <button onclick="showTab('chat')" class="tab-btn">Chat</button>
     <button onclick="showTab('settings')" class="tab-btn">Settings</button>
@@ -67,7 +70,23 @@ input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid 
 
   <!-- Top-up Tab -->
   <div id="tab-topup" class="tab hidden">
+    <div class="card mb-4">
+      <h3 class="font-bold mb-3">Manual Top-up</h3>
+      <input id="manualEmail" placeholder="User email">
+      <input id="manualAmount" type="number" placeholder="Amount" class="mt-2">
+      <button onclick="manualTopup()" class="btn mt-3 w-full">Credit User</button>
+    </div>
     <div id="topupList" class="space-y-4"></div>
+  </div>
+
+  <!-- Investments Tab -->
+  <div id="tab-invest" class="tab hidden">
+    <div id="investList" class="space-y-4"></div>
+  </div>
+
+  <!-- Referrals Tab -->
+  <div id="tab-refer" class="tab hidden">
+    <div id="referList" class="space-y-4"></div>
   </div>
 
   <!-- Services Tab -->
@@ -96,7 +115,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/fireba
 import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-// CHANGE THIS TO MATCH YOUR FIREBASE EMAIL EXACTLY
 const OWNER_EMAIL = "okugbepraise@gmail.com";
 
 const firebaseConfig = {
@@ -119,14 +137,12 @@ let allOrders = [];
 // Auth check + redirect
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    // Not logged in, send to login with redirect back to admin
     window.location.href = "login.html?redirect=admin.html";
     return;
   }
   
   currentUser = user;
   
-  // Check if this user is the owner
   if (user.email.toLowerCase().trim() !== OWNER_EMAIL.toLowerCase().trim()) {
     document.getElementById('loginCheck').innerHTML = 
       `<h2 class='text-red-500'>Access Denied. Not owner.</h2>
@@ -140,6 +156,8 @@ onAuthStateChanged(auth, async (user) => {
   loadUsers();
   loadOrders();
   loadTopups();
+  loadInvestments();
+  loadReferrals();
   loadServices();
   loadChats();
 });
@@ -181,7 +199,8 @@ function loadUsers() {
         <div>
           <p class="font-bold">${u.email}</p>
           <p class="text-sm text-gray-400">Balance: ₦${u.balance || 0}</p>
-          <p class="text-sm text-gray-400">Status: ${u.status || 'active'}</p>
+          <p class="text-sm text-gray-400">Referral Code: ${u.referralCode || 'N/A'}</p>
+          <p class="text-sm text-gray-400">Referred By: ${u.referredBy || 'None'}</p>
         </div>
         <button onclick="editBalance('${u.id}', ${u.balance || 0})" class="btn">Edit Balance</button>
       </div>
@@ -212,6 +231,23 @@ window.editBalance = async (uid, current) => {
     alert("Balance updated!");
     location.reload();
   }
+}
+
+// Manual Top-up
+window.manualTopup = async () => {
+  const email = document.getElementById('manualEmail').value.trim();
+  const amount = parseFloat(document.getElementById('manualAmount').value);
+  if (!email || isNaN(amount)) return alert("Enter valid email and amount");
+  
+  const userDoc = allUsers.find(u => u.email === email);
+  if (!userDoc) return alert("User not found");
+  
+  const newBal = (userDoc.balance || 0) + amount;
+  await updateDoc(doc(db, "users", userDoc.id), { balance: newBal });
+  alert(`Credited ₦${amount} to ${email}`);
+  document.getElementById('manualEmail').value = '';
+  document.getElementById('manualAmount').value = '';
+  location.reload();
 }
 
 // Orders Management
@@ -255,7 +291,7 @@ function loadTopups() {
         <div class="card">
           <p class="font-bold">${d.email}</p>
           <p>Amount: ₦${d.amount}</p>
-          <p class="text-sm text-gray-400">${d.note}</p>
+          <p class="text-sm text-gray-400">${d.note || ''}</p>
           <div class="flex gap-2 mt-3">
             <button onclick="approveTopup('${doc.id}', '${d.uid}', ${d.amount})" class="btn-green">Approve</button>
             <button onclick="declineTopup('${doc.id}')" class="btn-red">Decline</button>
@@ -283,16 +319,68 @@ window.declineTopup = async (reqId) => {
   location.reload();
 }
 
+// Investments
+function loadInvestments() {
+  const q = query(collection(db, "investments"), orderBy("timestamp", "desc"));
+  onSnapshot(q, (snap) => {
+    document.getElementById('investList').innerHTML = snap.docs.map(doc => {
+      const d = doc.data();
+      return `
+        <div class="card">
+          <p class="font-bold">${d.email}</p>
+          <p>Plan: ${d.plan}</p>
+          <p>Amount: ₦${d.amount}</p>
+          <p>Profit: ₦${d.profit || 0}</p>
+          <p>Status: <span class="font-bold">${d.status}</span></p>
+          <div class="flex gap-2 mt-3">
+            ${d.status === 'active' ? `<button onclick="payProfit('${doc.id}', '${d.uid}', ${d.profit})" class="btn-green">Pay Profit</button>` : ''}
+          </div>
+        </div>
+      `
+    }).join('') || '<p class="text-gray-400">No investments yet</p>';
+  });
+}
+
+window.payProfit = async (invId, uid, profit) => {
+  const userRef = doc(db, "users", uid);
+  const userSnap = await getDoc(userRef);
+  const currentBalance = userSnap.data()?.balance || 0;
+  
+  await updateDoc(userRef, { balance: currentBalance + profit });
+  await updateDoc(doc(db, "investments", invId), { status: "completed", paidAt: new Date() });
+  alert("Profit paid!");
+  location.reload();
+}
+
+// Referrals
+function loadReferrals() {
+  const q = query(collection(db, "referrals"), orderBy("timestamp", "desc"));
+  onSnapshot(q, (snap) => {
+    document.getElementById('referList').innerHTML = snap.docs.map(doc => {
+      const d = doc.data();
+      return `
+        <div class="card">
+          <p class="font-bold">Referrer: ${d.referrerEmail}</p>
+          <p>Referred: ${d.referredEmail}</p>
+          <p>Bonus: ₦${d.bonus}</p>
+          <p>Status: ${d.status}</p>
+        </div>
+      `
+    }).join('') || '<p class="text-gray-400">No referrals yet</p>';
+  });
+}
+
 // Services Management
 async function loadServices() {
   const snap1 = await getDoc(doc(db, 'config', 'services_part1'));
   const snap2 = await getDoc(doc(db, 'config', 'services_part2'));
   const services = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
   
-  document.getElementById('servicesList').innerHTML = services.map((s, i) => `
+  document.getElementById('servicesList').innerHTML = services.map((s) => `
     <div class="card">
       <p class="font-bold">${s.name}</p>
       <p>Price: ₦${s.pricePerUnit}</p>
+      <p>Category: ${s.category}</p>
       <p>Available: ${s.available ? 'Yes' : 'No'}</p>
     </div>
   `).join('') || '<p class="text-gray-400">No services found</p>';
