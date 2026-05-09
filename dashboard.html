@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,61 +122,11 @@
         <div class="max-w-7xl mx-auto">
             <div class="mb-16">
                 <h2 class="text-4xl font-bold uppercase tracking-tighter">The <span class="text-cyan-400">Marketplace</span></h2>
-                <p class="text-gray-500 mt-2">Click any service to request it. We'll contact you with pricing and delivery time.</p>
+                <p class="text-gray-500 mt-2" id="servicesCount">Loading services...</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="service-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer" data-service="Social Growth">
-                    <i data-lucide="trending-up" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <h3 class="font-bold text-lg mb-1">Social Growth</h3>
-                    <p class="text-gray-500 text-xs mb-4">TikTok, IG, YT, Twitter, FB Boosts via Shoprime.</p>
-                    <div class="text-cyan-400 font-bold text-sm">$0.02 - $45.00</div>
-                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition request-service">
-                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <div class="service-card p-6 rounded-2xl relative overflow-hidden group border-cyan-900/50 cursor-pointer" data-service="WhatsApp AI Pro">
-                    <i data-lucide="bot" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <h3 class="font-bold text-lg mb-1">WhatsApp AI Pro</h3>
-                    <p class="text-gray-500 text-xs mb-4">Custom Baileys-driven bots with Gemini AI.</p>
-                    <div class="text-cyan-400 font-bold text-sm">Custom Quote</div>
-                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition request-service">
-                        <i data-lucide="code" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Security Audits">
-                    <i data-lucide="shield-check" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <h3 class="font-bold text-lg mb-1">Security Audits</h3>
-                    <p class="text-gray-500 text-xs mb-4">Code vulnerability testing and API hardening.</p>
-                    <div class="text-cyan-400 font-bold text-sm">Professional</div>
-                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
-                </div>
-
-                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Custom Coding">
-                    <i data-lucide="code" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <h3 class="font-bold text-lg mb-1">Custom Coding</h3>
-                    <p class="text-gray-500 text-xs mb-4">Web apps, bots, automation scripts.</p>
-                    <div class="text-cyan-400 font-bold text-sm">From ₦50k</div>
-                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
-                </div>
-
-                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Branding & Design">
-                    <i data-lucide="palette" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <h3 class="font-bold text-lg mb-1">Branding & Design</h3>
-                    <p class="text-gray-500 text-xs mb-4">Logo, UI/UX, brand identity packages.</p>
-                    <div class="text-cyan-400 font-bold text-sm">From ₦30k</div>
-                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
-                </div>
-
-                <div class="service-card p-6 rounded-2xl cursor-pointer" data-service="Automation Setup">
-                    <i data-lucide="zap" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <h3 class="font-bold text-lg mb-1">Automation Setup</h3>
-                    <p class="text-gray-500 text-xs mb-4">Workflow automation, API integrations.</p>
-                    <div class="text-cyan-400 font-bold text-sm">From ₦20k</div>
-                    <button class="mt-4 w-full border-cyan-500/30 text-cyan-400 py-2 rounded-lg text-sm hover:bg-cyan-500/10 transition request-service">Request</button>
-                </div>
+            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Services load here dynamically -->
             </div>
         </div>
     </section>
@@ -234,9 +185,23 @@
         </div>
     </section>
 
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
+                <button id="closeOrderModal" class="text-gray-500 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="orderFormContent"></div>
+            <div id="orderMsg" class="hidden mt-3 p-3 rounded-lg text-sm"></div>
+        </div>
+    </div>
+
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Account Settings</h3>
                 <button id="closeModal" class="text-gray-500 hover:text-white">
@@ -321,6 +286,7 @@
         let currentUser = null;
         let userBalanceNGN = 0;
         let selectedCurrency = 'NGN';
+        let allServices = [];
 
         // Elements
         const userName = document.getElementById('userName');
@@ -328,26 +294,132 @@
         const userCreated = document.getElementById('userCreated');
         const balanceEl = document.getElementById('balance');
         const currencySelect = document.getElementById('currencySelect');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsModal = document.getElementById('settingsModal');
-        const closeModal = document.getElementById('closeModal');
-        const pwMsg = document.getElementById('pwMsg');
-        const changePwBtn = document.getElementById('changePwBtn');
-        const newPassword = document.getElementById('newPassword');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const requestTopupBtn = document.getElementById('requestTopupBtn');
-        const topupModal = document.getElementById('topupModal');
-        const closeTopupModal = document.getElementById('closeTopupModal');
-        const submitTopup = document.getElementById('submitTopup');
-        const topupMsg = document.getElementById('topupMsg');
-        const contactForm = document.getElementById('contactForm');
-        const contactMsg = document.getElementById('contactMsg');
+        const servicesGrid = document.getElementById('servicesGrid');
+        const servicesCount = document.getElementById('servicesCount');
+        const orderModal = document.getElementById('orderModal');
+        const orderServiceName = document.getElementById('orderServiceName');
+        const orderFormContent = document.getElementById('orderFormContent');
+        const orderMsg = document.getElementById('orderMsg');
+        const closeOrderModal = document.getElementById('closeOrderModal');
 
         function updateBalanceDisplay() {
             const converted = userBalanceNGN * rates[selectedCurrency];
             const symbol = currencySymbols[selectedCurrency];
             balanceEl.textContent = `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
+
+        async function loadServices() {
+            try {
+                const servicesDoc = await getDoc(doc(db, "config", "services"));
+                if (!servicesDoc.exists()) {
+                    servicesCount.textContent = "No services found. Upload services.json first.";
+                    return;
+                }
+                
+                allServices = servicesDoc.data().list || [];
+                const activeServices = allServices.filter(s => s.available === true);
+                
+                servicesCount.textContent = `${activeServices.length} active services available`;
+                renderServices(activeServices);
+            } catch (err) {
+                console.error(err);
+                servicesCount.textContent = "Error loading services";
+            }
+        }
+
+        function renderServices(services) {
+            servicesGrid.innerHTML = '';
+            services.forEach(service => {
+                const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+                const priceText = service.pricePerUnit ? `₦${service.pricePerUnit}/unit` : 'Custom Quote';
+                const icon = service.category === 'TikTok' ? 'trending-up' : 
+                             service.category === 'Instagram' ? 'instagram' :
+                             service.category === 'YouTube' ? 'youtube' : 'zap';
+
+                const card = document.createElement('div');
+                card.className = 'service-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer';
+                card.innerHTML = `
+                    <i data-lucide="${icon}" class="text-cyan-400 mb-4 w-5 h-5"></i>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="font-bold text-lg">${service.name}</h3>
+                        ${!isAuto ? '<span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">Manual</span>' : ''}
+                    </div>
+                    <p class="text-gray-500 text-xs mb-2">${service.category}</p>
+                    <p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max.toLocaleString()}</p>
+                    <div class="text-cyan-400 font-bold text-sm">${priceText}</div>
+                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition order-btn">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    </button>
+                `;
+                card.querySelector('.order-btn').addEventListener('click', () => openOrderModal(service));
+                servicesGrid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function openOrderModal(service) {
+            orderServiceName.textContent = service.name;
+            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+            
+            orderFormContent.innerHTML = `
+                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
+                <input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>
+                <input type="number" id="orderQty" placeholder="Quantity (Min: ${service.min}, Max: ${service.max})" 
+                       min="${service.min}" max="${service.max}" 
+                       class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>
+                <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
+            `;
+            
+            document.getElementById('submitOrder').addEventListener('click', () => submitOrder(service));
+            orderModal.classList.add('active');
+        }
+
+        async function submitOrder(service) {
+            const link = document.getElementById('orderLink').value;
+            const qty = document.getElementById('orderQty').value;
+            
+            if (!link || !qty) {
+                showOrderMsg('Fill all fields', 'red');
+                return;
+            }
+            
+            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+            
+            try {
+                await addDoc(collection(db, "orders"), {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    serviceId: service.id,
+                    serviceName: service.name,
+                    category: service.category,
+                    link: link,
+                    quantity: parseInt(qty),
+                    pricePerUnit: service.pricePerUnit || 0,
+                    totalPrice: (service.pricePerUnit || 0) * parseInt(qty),
+                    isAuto: isAuto,
+                    status: 'pending',
+                    createdAt: new Date()
+                });
+                
+                showOrderMsg('Order placed! Check WhatsApp for updates.', 'green');
+                setTimeout(() => {
+                    orderModal.classList.remove('active');
+                    orderMsg.className = 'hidden';
+                }, 2000);
+            } catch (err) {
+                showOrderMsg('Error placing order. Try again.', 'red');
+            }
+        }
+
+        function showOrderMsg(msg, type) {
+            orderMsg.textContent = msg;
+            orderMsg.className = `mt-3 p-3 rounded-lg text-sm ${type === 'green' ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`;
+        }
+
+        closeOrderModal.addEventListener('click', () => orderModal.classList.remove('active'));
+        orderModal.addEventListener('click', (e) => {
+            if (e.target === orderModal) orderModal.classList.remove('active');
+        });
 
         // Auth Check
         onAuthStateChanged(auth, async (user) => {
@@ -372,6 +444,7 @@
                     });
                 }
                 updateBalanceDisplay();
+                loadServices();
             } else {
                 window.location.href = "login.html";
             }
@@ -387,6 +460,21 @@
         });
 
         // Modals
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeModal = document.getElementById('closeModal');
+        const pwMsg = document.getElementById('pwMsg');
+        const changePwBtn = document.getElementById('changePwBtn');
+        const newPassword = document.getElementById('newPassword');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const requestTopupBtn = document.getElementById('requestTopupBtn');
+        const topupModal = document.getElementById('topupModal');
+        const closeTopupModal = document.getElementById('closeTopupModal');
+        const submitTopup = document.getElementById('submitTopup');
+        const topupMsg = document.getElementById('topupMsg');
+        const contactForm = document.getElementById('contactForm');
+        const contactMsg = document.getElementById('contactMsg');
+
         settingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
         closeModal.addEventListener('click', () => settingsModal.classList.remove('active'));
         settingsModal.addEventListener('click', (e) => {
@@ -456,16 +544,6 @@
                 topupMsg.textContent = 'Error sending request. Try WhatsApp directly.';
                 topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
             }
-        });
-
-        // Service Request Buttons
-        document.querySelectorAll('.request-service').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const service = e.target.closest('[data-service]').getAttribute('data-service');
-                document.getElementById('support').scrollIntoView({behavior: 'smooth'});
-                document.getElementById('contactService').value = 'Service Request';
-                document.getElementById('contactMessage').value = `I'm interested in: ${service}\n\nDetails:`;
-            });
         });
 
         // Contact Form
