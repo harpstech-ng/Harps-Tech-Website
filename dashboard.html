@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +19,7 @@
       .modal.active { display: flex; }
       .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
       .chat-bubble { animation: slideUp 0.3s ease; }
-      .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; }
+      .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,0.08); border-radius: 20px; padding: 24px; }
       @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
     </style>
 </head>
@@ -70,9 +69,8 @@
                 </h1>
             </div>
 
-            <!-- Top Action Cards: Referral, Investment, Social -->
+            <!-- Top Action Cards -->
             <div class="grid md:grid-cols-3 gap-6 mb-10">
-                <!-- Referral Card -->
                 <div class="card">
                     <h3 class="text-lg font-bold mb-2">Refer & Earn</h3>
                     <p class="text-gray-400 text-sm mb-3">Share your link. Get ₦500 when they fund. They get ₦200 bonus.</p>
@@ -84,7 +82,6 @@
                     <p class="text-xs text-gray-500 mt-2">Total Earned: ₦<span id="refEarned">0</span></p>
                 </div>
 
-                <!-- Investment Card -->
                 <div class="card">
                     <h3 class="text-lg font-bold mb-2">Invest</h3>
                     <p class="text-gray-400 text-sm mb-3">Invest and earn up to 15% in 7 days.</p>
@@ -92,7 +89,6 @@
                     <p class="text-xs text-gray-500">Active Investments: <span id="activeInvest">0</span></p>
                 </div>
 
-                <!-- Social Card -->
                 <div class="card">
                     <h3 class="text-lg font-bold mb-3">Join Our Community</h3>
                     <div class="space-y-2">
@@ -236,21 +232,20 @@
                 <p class="text-lg font-bold">Account: 8141612736</p>
                 <p class="text-sm">Name: Okugbe Praise</p>
             </div>
-            <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
+            <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
             <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
             <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
-    <!-- Invest Modal -->
     <div id="investModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Invest</h3>
                 <button id="closeInvestModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <select id="investPlan" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl mb-3">
+            <select id="investPlan" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-3">
                 <option value="7days-15">7 Days - 15% Profit</option>
                 <option value="14days-25">14 Days - 25% Profit</option>
                 <option value="30days-40">30 Days - 40% Profit</option>
@@ -268,7 +263,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -304,7 +299,6 @@
             balanceEl.textContent = `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
-        // Referral & Investment Setup
         async function setupUserExtras(user) {
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
@@ -313,7 +307,6 @@
                 userData = userSnap.data();
                 userBalanceNGN = userData.balance || 0;
                 
-                // Generate referral code if not exists
                 if (!userData.referralCode) {
                     const code = 'HARPS-' + user.uid.substring(0, 8).toUpperCase();
                     await updateDoc(userRef, { referralCode: code });
@@ -323,7 +316,6 @@
                 document.getElementById('referralCode').textContent = userData.referralCode;
                 document.getElementById('refEarned').textContent = userData.refEarned || 0;
                 
-                // Load active investments count
                 const invQuery = query(collection(db, "investments"), where("uid", "==", user.uid), where("status", "==", "active"));
                 const invSnap = await getDocs(invQuery);
                 document.getElementById('activeInvest').textContent = invSnap.size;
@@ -331,14 +323,12 @@
             updateBalanceDisplay();
         }
 
-        // Copy Referral Link
         document.getElementById('copyRefBtn').onclick = () => {
             const link = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
             navigator.clipboard.writeText(link);
             alert('Referral link copied!');
         };
 
-        // Investment Modal
         document.getElementById('investBtn').onclick = () => document.getElementById('investModal').classList.add('active');
         document.getElementById('closeInvestModal').onclick = () => document.getElementById('investModal').classList.remove('active');
 
@@ -365,7 +355,6 @@
                 timestamp: new Date()
             });
 
-            // Deduct from balance
             await updateDoc(doc(db, "users", currentUser.uid), { 
                 balance: userBalanceNGN - amount 
             });
@@ -375,7 +364,6 @@
             setTimeout(() => location.reload(), 1500);
         };
 
-        // Rest of your existing code remains the same...
         async function loadServices() {
             try {
                 const [snap1, snap2] = await Promise.all([
@@ -384,17 +372,24 @@
                 ]);
 
                 allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
+                
+                if (allServices.length === 0) {
+                    document.getElementById('servicesCount').textContent = "No services found. Upload services in admin panel.";
+                    return;
+                }
+
                 document.getElementById('servicesCount').textContent = `${allServices.length} premium services available`;
                 renderServices(allServices);
             } catch (err) {
-                console.error(err);
-                document.getElementById('servicesCount').textContent = "Error loading services";
+                console.error("Error loading services:", err);
+                document.getElementById('servicesCount').textContent = "Error loading services. Check console.";
             }
         }
 
         function renderServices(services) {
             const servicesGrid = document.getElementById('servicesGrid');
             servicesGrid.innerHTML = '';
+            
             services.forEach(service => {
                 if (service.available === false) return;
 
@@ -485,7 +480,6 @@
 
         document.getElementById('closeOrderModal').onclick = () => document.getElementById('orderModal').classList.remove('active');
 
-        // Chat System
         const chatWidget = document.getElementById('chatWidget');
         const chatOpenBtn = document.getElementById('chatOpenBtn');
         const chatCloseBtn = document.getElementById('chatCloseBtn');
@@ -549,7 +543,6 @@
             if (e.key === 'Enter') sendChatMessage();
         });
 
-        // Auth
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -561,7 +554,6 @@
             }
         });
 
-        // Top-up
         document.getElementById('submitTopup').onclick = async () => {
             const amount = document.getElementById('topupAmount').value;
             const note = document.getElementById('topupNote').value;
@@ -586,23 +578,25 @@
             }
         };
 
-        // Other handlers
         document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
         document.getElementById('closeModal').onclick = () => document.getElementById('settingsModal').classList.remove('active');
         document.getElementById('requestTopupBtn').onclick = () => document.getElementById('topupModal').classList.add('active');
         document.getElementById('closeTopupModal').onclick = () => document.getElementById('topupModal').classList.remove('active');
-        document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href = "login.html"; };
+        document.getElementById('logoutBtn').onclick = async () => { 
+        await signOut(auth); 
+        window.location.href = "login.html"; 
+    };
 
-        currencySelect.addEventListener('change', async (e) => {
-            selectedCurrency = e.target.value;
-            localStorage.setItem('currency', selectedCurrency);
-            updateBalanceDisplay();
-            if (currentUser) {
-                await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
-            }
-        });
+    currencySelect.addEventListener('change', async (e) => {
+        selectedCurrency = e.target.value;
+        localStorage.setItem('currency', selectedCurrency);
+        updateBalanceDisplay();
+        if (currentUser) {
+            await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
+        }
+    });
 
-        lucide.createIcons();
-    </script>
+    lucide.createIcons();
+</script>
 </body>
 </html>
