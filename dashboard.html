@@ -317,8 +317,6 @@
                 }
                 
                 allServices = servicesDoc.data().list || [];
-                
-                // Show all services - removed the available filter
                 servicesCount.textContent = `${allServices.length} services available`;
                 renderServices(allServices);
             } catch (err) {
@@ -521,7 +519,7 @@
             window.location.href = "login.html";
         });
 
-        // Submit Top Up Request
+        // Submit Top Up Request - FIXED: Uses updateDoc so it doesn't overwrite currency
         submitTopup.addEventListener('click', async () => {
             const amount = document.getElementById('topupAmount').value;
             const note = document.getElementById('topupNote').value;
@@ -531,6 +529,7 @@
                 return;
             }
             try {
+                // Create top-up request
                 await addDoc(collection(db, "topup_requests"), {
                     uid: currentUser.uid,
                     email: currentUser.email,
@@ -539,6 +538,15 @@
                     status: 'pending',
                     createdAt: new Date()
                 });
+                
+                // Only update balance, don't touch currency
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    balance: userBalanceNGN + parseFloat(amount)
+                });
+                
+                userBalanceNGN += parseFloat(amount);
+                updateBalanceDisplay();
+                
                 topupMsg.textContent = 'Request sent! Check WhatsApp/Email for confirmation.';
                 topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
                 document.getElementById('topupAmount').value = '';
