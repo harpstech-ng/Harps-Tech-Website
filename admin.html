@@ -94,9 +94,10 @@ input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-const OWNER_EMAIL = "okugbepraise@gmail.com"; // CHANGE THIS EXACTLY
+// CHANGE THIS TO MATCH YOUR FIREBASE EMAIL EXACTLY
+const OWNER_EMAIL = "okugbepraise@gmail.com";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -118,14 +119,18 @@ let allOrders = [];
 // Auth check + redirect
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    // Not logged in, send to login with redirect back to admin
+    window.location.href = "login.html?redirect=admin.html";
     return;
   }
   
   currentUser = user;
   
+  // Check if this user is the owner
   if (user.email.toLowerCase().trim() !== OWNER_EMAIL.toLowerCase().trim()) {
-    document.getElementById('loginCheck').innerHTML = "<h2 class='text-red-500'>Access Denied. Not owner.</h2>";
+    document.getElementById('loginCheck').innerHTML = 
+      `<h2 class='text-red-500'>Access Denied. Not owner.</h2>
+       <p class='text-gray-400 mt-2'>Logged in as: ${user.email}</p>`;
     return;
   }
   
@@ -165,7 +170,7 @@ async function loadDashboard() {
       <span>${o.email}</span>
       <span>₦${o.amount} - ${o.status}</span>
     </div>
-  `).join('');
+  `).join('') || '<p class="text-gray-400">No orders yet</p>';
 }
 
 // Users Management
@@ -178,10 +183,7 @@ function loadUsers() {
           <p class="text-sm text-gray-400">Balance: ₦${u.balance || 0}</p>
           <p class="text-sm text-gray-400">Status: ${u.status || 'active'}</p>
         </div>
-        <div class="flex gap-2">
-          <button onclick="editBalance('${u.id}', ${u.balance || 0})" class="btn">Edit Balance</button>
-          <button onclick="toggleUser('${u.id}', '${u.status || 'active'}')" class="btn-red">${u.status === 'suspended' ? 'Activate' : 'Suspend'}</button>
-        </div>
+        <button onclick="editBalance('${u.id}', ${u.balance || 0})" class="btn">Edit Balance</button>
       </div>
     </div>
   `).join('');
@@ -208,15 +210,8 @@ window.editBalance = async (uid, current) => {
   if (newBal !== null && !isNaN(newBal)) {
     await updateDoc(doc(db, "users", uid), { balance: parseFloat(newBal) });
     alert("Balance updated!");
-    loadUsers();
+    location.reload();
   }
-}
-
-window.toggleUser = async (uid, status) => {
-  const newStatus = status === 'suspended' ? 'active' : 'suspended';
-  await updateDoc(doc(db, "users", uid), { status: newStatus });
-  alert(`User ${newStatus}`);
-  loadUsers();
 }
 
 // Orders Management
@@ -240,7 +235,7 @@ function loadOrders() {
           <button onclick="updateOrderStatus('${o.id}')" class="btn">Update</button>
         </div>
       </div>
-    `).join('');
+    `).join('') || '<p class="text-gray-400">No orders yet</p>';
   });
 }
 
@@ -279,11 +274,13 @@ window.approveTopup = async (reqId, uid, amount) => {
   await updateDoc(userRef, { balance: currentBalance + amount });
   await updateDoc(doc(db, "topup_requests", reqId), { status: "approved" });
   alert("Credited successfully!");
+  location.reload();
 }
 
 window.declineTopup = async (reqId) => {
   await updateDoc(doc(db, "topup_requests", reqId), { status: "declined" });
   alert("Declined!");
+  location.reload();
 }
 
 // Services Management
@@ -297,12 +294,8 @@ async function loadServices() {
       <p class="font-bold">${s.name}</p>
       <p>Price: ₦${s.pricePerUnit}</p>
       <p>Available: ${s.available ? 'Yes' : 'No'}</p>
-      <div class="flex gap-2 mt-3">
-        <button onclick="toggleService(${i})" class="btn">${s.available ? 'Disable' : 'Enable'}</button>
-        <button onclick="editService(${i})" class="btn">Edit</button>
-      </div>
     </div>
-  `).join('');
+  `).join('') || '<p class="text-gray-400">No services found</p>';
 }
 
 // Chat Management
@@ -325,7 +318,7 @@ function loadChats() {
         <input id="reply-${uid}" placeholder="Type reply">
         <button onclick="sendReply('${uid}', '${users[uid].email}')" class="btn mt-2 w-full">Send Reply</button>
       </div>
-    `).join('');
+    `).join('') || '<p class="text-gray-400">No chats yet</p>';
   });
 }
 
