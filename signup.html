@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signup - Harps Tech</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; }
+</style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+<div class="text-center">
+  <h2 class="text-2xl font-bold mb-4">Redirecting...</h2>
+  <p class="text-gray-400">Please wait</p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
+  authDomain: "harps-tech-95856.firebaseapp.com",
+  projectId: "harps-tech-95856",
+  storageBucket: "harps-tech-95856.firebasestorage.app",
+  messagingSenderId: "937702997468",
+  appId: "1:937702997468:web:ca65a04fa1b026b5506319"
+};
+
+initializeApp(firebaseConfig);
+
+const urlParams = new URLSearchParams(window.location.search);
+const refCode = urlParams.get('ref');
+
+if (refCode) {
+  localStorage.setItem('refCode', refCode);
+}
+
+window.location.href = "login.html";
+</script>
+</body>
+</html>
