@@ -20,7 +20,7 @@
       .modal.active { display: flex; }
       .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
       .chat-bubble { animation: slideUp 0.3s ease; }
-       @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+       @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); }
     </style>
 </head>
 <body>
@@ -61,7 +61,7 @@
     <section id="dashboard" class="relative min-h-screen flex items-center pt-32 hero-gradient">
         <div class="max-w-7xl mx-auto px-6 w-full">
             <div class="mb-12">
-                <div class="inline-block px-4 py-1 border border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
+                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
                     Welcome back, <span id="userName">User</span>
                 </div>
                 <h1 class="text-5xl md:text-7xl font-extrabold leading-none mb-6 uppercase tracking-tighter">
@@ -122,7 +122,7 @@
     </section>
 
     <!-- Chat Widget -->
-    <div id="chatWidget" class="fixed bottom-6 right-6 w-96 max-w- bg-[#0a0a0a] border-white/10 rounded-3xl shadow-2xl shadow-cyan-500/20 hidden flex-col overflow-hidden z-50">
+    <div id="chatWidget" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] bg-[#0a0a0a] border-white/10 rounded-3xl shadow-2xl shadow-cyan-500/20 hidden flex-col overflow-hidden z-50">
         <div class="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 flex justify-between items-center">
             <div>
                 <h3 class="font-bold text-black">Live Support</h3>
@@ -148,9 +148,9 @@
         </div>
     </div>
 
-    <!-- Modals: Order, Settings, Topup -->
+    <!-- Modals -->
     <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
                 <button id="closeOrderModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -170,7 +170,7 @@
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Change Password</label>
                     <div id="pwMsg" class="hidden mb-3 p-3 rounded-xl text-sm"></div>
-                    <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
+                    <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
                     <button id="changePwBtn" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Update Password</button>
                 </div>
                 <div class="border-t border-white/10 pt-6">
@@ -192,8 +192,8 @@
                 <p class="text-lg font-bold">Account: 8141612736</p>
                 <p class="text-sm">Name: Okugbe Praise</p>
             </div>
-            <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
-            <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
+            <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
+            <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
             <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
@@ -230,12 +230,15 @@
         let allServices = [];
         let chatUnsubscribe = null;
 
-        // DOM elements
         const userName = document.getElementById('userName');
         const balanceEl = document.getElementById('balance');
         const currencySelect = document.getElementById('currencySelect');
         const servicesGrid = document.getElementById('servicesGrid');
         const servicesCount = document.getElementById('servicesCount');
+        const orderModal = document.getElementById('orderModal');
+        const orderServiceName = document.getElementById('orderServiceName');
+        const orderFormContent = document.getElementById('orderFormContent');
+        const orderMsg = document.getElementById('orderMsg');
 
         function updateBalanceDisplay() {
             const converted = userBalanceNGN * rates[selectedCurrency];
@@ -250,7 +253,7 @@
                     getDoc(doc(db, 'config', 'services_part2'))
                 ]);
 
-                allServices = [...(snap1.data()?.list || []),...(snap2.data()?.list || [])];
+                allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
                 servicesCount.textContent = `${allServices.length} premium services available`;
                 renderServices(allServices);
             } catch (err) {
@@ -264,53 +267,65 @@
             services.forEach(service => {
                 if (service.available === false) return;
 
-                const isAuto =!service.id.startsWith('srv_') &&!service.id.startsWith('dummy');
-                const priceText = service.pricePerUnit? `₦${service.pricePerUnit.toLocaleString()}/unit` : 'Custom Quote';
+                const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+                const priceText = service.pricePerUnit ? `₦${service.pricePerUnit.toLocaleString()}/unit` : 'Custom Quote';
                 const img = service.image || 'https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech';
 
                 const card = document.createElement('div');
-                card.className = 'service-card rounded-3xl overflow-hidden group cursor-pointer';
+                card.className = 'service-card rounded-3xl overflow-hidden group';
                 card.innerHTML = `
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="${img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="${service.name}">
+                    <div class="relative h-48 overflow-hidden bg-black/50">
+                        <img src="${img}" 
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                             alt="${service.name}"
+                             onerror="this.src='https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                        ${!isAuto? '<span class="absolute top-4 right-4 text-xs bg-yellow-500/90 text-black px-3 py-1 rounded-full font-bold">Manual</span>' : ''}
+                        ${!isAuto ? '<span class="absolute top-4 right-4 text-xs bg-yellow-500/90 text-black px-3 py-1 rounded-full font-bold">Manual</span>' : ''}
                     </div>
                     <div class="p-6">
-                        <div class="flex items-start justify-between mb-2">
-                            <h3 class="font-bold text-lg leading-tight">${service.name}</h3>
-                        </div>
-                        <p class="text-gray-500 text-xs mb-3">${service.category}</p>
-                        ${service.min? `<p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
+                        <h3 class="font-bold text-lg leading-tight mb-1">${service.name}</h3>
+                        <p class="text-gray-500 text-xs mb-2">${service.category}</p>
+                        ${service.min ? `<p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
                         <div class="flex items-center justify-between">
                             <div class="text-cyan-400 font-bold text-lg">${priceText}</div>
-                            <button class="bg-white text-black px-4 py-2 rounded-xl font-semibold text-sm opacity-0 group-hover:opacity-100 transition order-btn">
+                            <button class="bg-white text-black px-4 py-2 rounded-xl font-semibold text-sm order-btn" data-id="${service.id}">
                                 Order
                             </button>
                         </div>
                     </div>
                 `;
-                card.querySelector('.order-btn').addEventListener('click', () => openOrderModal(service));
                 servicesGrid.appendChild(card);
             });
+
+            // Bind events after all cards are in DOM
+            document.querySelectorAll('.order-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const service = services.find(s => s.id === id);
+                    if (service) openOrderModal(service);
+                });
+            });
+
             lucide.createIcons();
         }
 
         function openOrderModal(service) {
-            document.getElementById('orderServiceName').textContent = service.name;
-            const fieldsHtml = service.fields?.includes('link')?
-                `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
+            orderServiceName.textContent = service.name;
+            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+            
+            const fieldsHtml = service.fields?.includes('link') ?
+                `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
 
-            document.getElementById('orderFormContent').innerHTML = `
-                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto? 'Auto Delivery' : 'Manual Delivery'}</p>
+            orderFormContent.innerHTML = `
+                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
                 ${fieldsHtml}
-                ${service.fields?.includes('quantity')?
-                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
+                ${service.fields?.includes('quantity') ?
+                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
                 <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
             `;
 
             document.getElementById('submitOrder').onclick = () => submitOrder(service);
-            document.getElementById('orderModal').classList.add('active');
+            orderModal.classList.add('active');
             lucide.createIcons();
         }
 
@@ -324,20 +339,26 @@
                     userEmail: currentUser.email,
                     serviceId: service.id,
                     serviceName: service.name,
-                    link, quantity: parseInt(qty),
+                    link, 
+                    quantity: parseInt(qty),
                     totalPrice: (service.pricePerUnit || 0) * parseInt(qty),
                     status: 'pending',
                     createdAt: new Date()
                 });
 
-                document.getElementById('orderMsg').textContent = 'Order placed! Check chat for updates.';
-                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
-                setTimeout(() => document.getElementById('orderModal').classList.remove('active'), 2000);
+                orderMsg.textContent = 'Order placed! Check chat for updates.';
+                orderMsg.className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+                setTimeout(() => orderModal.classList.remove('active'), 2000);
             } catch (err) {
-                document.getElementById('orderMsg').textContent = 'Error placing order.';
-                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                orderMsg.textContent = 'Error placing order.';
+                orderMsg.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
             }
         }
+
+        document.getElementById('closeOrderModal').onclick = () => orderModal.classList.remove('active');
+        orderModal.addEventListener('click', (e) => {
+            if (e.target === orderModal) orderModal.classList.remove('active');
+        });
 
         // Chat System
         const chatWidget = document.getElementById('chatWidget');
@@ -350,7 +371,7 @@
         chatOpenBtn.onclick = () => {
             chatWidget.classList.remove('hidden');
             chatWidget.classList.add('flex');
-            if (currentUser &&!chatUnsubscribe) loadChatMessages();
+            if (currentUser && !chatUnsubscribe) loadChatMessages();
         };
         chatCloseBtn.onclick = () => {
             chatWidget.classList.add('hidden');
@@ -360,7 +381,7 @@
 
         async function sendChatMessage() {
             const text = chatInput.value.trim();
-            if (!text ||!currentUser) return;
+            if (!text || !currentUser) return;
 
             await addDoc(collection(db, "chat_messages"), {
                 uid: currentUser.uid,
@@ -388,8 +409,8 @@
                     const data = doc.data();
                     const isUser = data.sender === 'user';
                     chatMessages.innerHTML += `
-                        <div class="chat-bubble ${isUser? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-2xl text-sm">
-                            <p class="${isUser? 'text-cyan-400' : 'text-gray-400'} font-semibold mb-1">${isUser? 'You' : 'Support'}</p>
+                        <div class="chat-bubble ${isUser ? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-2xl text-sm">
+                            <p class="${isUser ? 'text-cyan-400' : 'text-gray-400'} font-semibold mb-1">${isUser ? 'You' : 'Support'}</p>
                             <p>${data.message}</p>
                         </div>
                     `;
@@ -422,7 +443,7 @@
             }
         });
 
-        // Top-up - MANUAL ONLY, no auto credit
+        // Top-up - MANUAL ONLY
         document.getElementById('submitTopup').onclick = async () => {
             const amount = document.getElementById('topupAmount').value;
             const note = document.getElementById('topupNote').value;
@@ -453,6 +474,14 @@
         document.getElementById('requestTopupBtn').onclick = () => document.getElementById('topupModal').classList.add('active');
         document.getElementById('closeTopupModal').onclick = () => document.getElementById('topupModal').classList.remove('active');
         document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href = "login.html"; };
+
+        currencySelect.addEventListener('change', async (e) => {
+            selectedCurrency = e.target.value;
+            updateBalanceDisplay();
+            if (currentUser) {
+                await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
+            }
+        });
 
         lucide.createIcons();
     </script>
