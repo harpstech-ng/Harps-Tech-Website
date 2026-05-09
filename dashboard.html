@@ -20,7 +20,8 @@
       .modal.active { display: flex; }
       .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
       .chat-bubble { animation: slideUp 0.3s ease; }
-       @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); }
+      .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; }
+      @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -36,7 +37,7 @@
             <div class="hidden lg:flex gap-10 text-xs font-semibold uppercase tracking-widest text-gray-400">
                 <a href="#dashboard" class="hover:text-cyan-400 transition">Dashboard</a>
                 <a href="#services" class="hover:text-cyan-400 transition">Services</a>
-                <a href="#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="about.html" class="hover:text-cyan-400 transition">About</a>
                 <a href="#support" class="hover:text-cyan-400 transition">Support</a>
             </div>
 
@@ -69,6 +70,49 @@
                 </h1>
             </div>
 
+            <!-- Top Action Cards: Referral, Investment, Social -->
+            <div class="grid md:grid-cols-3 gap-6 mb-10">
+                <!-- Referral Card -->
+                <div class="card">
+                    <h3 class="text-lg font-bold mb-2">Refer & Earn</h3>
+                    <p class="text-gray-400 text-sm mb-3">Share your link. Get ₦500 when they fund. They get ₦200 bonus.</p>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3">
+                        <p class="text-xs text-gray-500">Your Referral Code</p>
+                        <p id="referralCode" class="font-bold text-cyan-400">Loading...</p>
+                    </div>
+                    <button id="copyRefBtn" class="w-full bg-white/5 hover:bg-white/10 py-2 rounded-xl text-sm font-semibold">Copy Link</button>
+                    <p class="text-xs text-gray-500 mt-2">Total Earned: ₦<span id="refEarned">0</span></p>
+                </div>
+
+                <!-- Investment Card -->
+                <div class="card">
+                    <h3 class="text-lg font-bold mb-2">Invest</h3>
+                    <p class="text-gray-400 text-sm mb-3">Invest and earn up to 15% in 7 days.</p>
+                    <button id="investBtn" class="w-full btn-premium text-black font-bold py-2 rounded-xl mb-2">Invest Now</button>
+                    <p class="text-xs text-gray-500">Active Investments: <span id="activeInvest">0</span></p>
+                </div>
+
+                <!-- Social Card -->
+                <div class="card">
+                    <h3 class="text-lg font-bold mb-3">Join Our Community</h3>
+                    <div class="space-y-2">
+                        <a href="https://chat.whatsapp.com/CJuEnldG4UuEzuSRaLSMz6?mode=gi_t" target="_blank" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
+                            <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i> WhatsApp Group
+                        </a>
+                        <a href="https://whatsapp.com/channel/0029VbCj5vI7DAWyvVlz4n0T" target="_blank" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
+                            <i data-lucide="radio" class="w-4 h-4 text-cyan-400"></i> WhatsApp Channel
+                        </a>
+                        <a href="https://www.tiktok.com/@harpstechofficialpage" target="_blank" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
+                            <i data-lucide="music" class="w-4 h-4 text-cyan-400"></i> TikTok Page
+                        </a>
+                        <a href="about.html" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
+                            <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i> About Harps Tech
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Balance Card -->
             <div class="grid lg:grid-cols-3 gap-6 mb-16">
                 <div class="lg:col-span-2 balance-card rounded-3xl p-8 md:p-12 shadow-2xl shadow-cyan-500/20">
                     <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
@@ -150,7 +194,7 @@
 
     <!-- Modals -->
     <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
                 <button id="closeOrderModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -170,7 +214,7 @@
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Change Password</label>
                     <div id="pwMsg" class="hidden mb-3 p-3 rounded-xl text-sm"></div>
-                    <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
+                    <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
                     <button id="changePwBtn" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Update Password</button>
                 </div>
                 <div class="border-t border-white/10 pt-6">
@@ -181,7 +225,7 @@
     </div>
 
     <div id="topupModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Request Top Up</h3>
                 <button id="closeTopupModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -193,9 +237,27 @@
                 <p class="text-sm">Name: Okugbe Praise</p>
             </div>
             <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
-            <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
+            <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
             <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
+        </div>
+    </div>
+
+    <!-- Invest Modal -->
+    <div id="investModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Invest</h3>
+                <button id="closeInvestModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <select id="investPlan" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl mb-3">
+                <option value="7days-15">7 Days - 15% Profit</option>
+                <option value="14days-25">14 Days - 25% Profit</option>
+                <option value="30days-40">30 Days - 40% Profit</option>
+            </select>
+            <input type="number" id="investAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
+            <button id="submitInvest" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Start Investment</button>
+            <div id="investMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
@@ -226,19 +288,15 @@
 
         let currentUser = null;
         let userBalanceNGN = 0;
-        let selectedCurrency = 'NGN';
+        let selectedCurrency = localStorage.getItem('currency') || 'NGN';
         let allServices = [];
         let chatUnsubscribe = null;
+        let userData = {};
 
         const userName = document.getElementById('userName');
         const balanceEl = document.getElementById('balance');
         const currencySelect = document.getElementById('currencySelect');
-        const servicesGrid = document.getElementById('servicesGrid');
-        const servicesCount = document.getElementById('servicesCount');
-        const orderModal = document.getElementById('orderModal');
-        const orderServiceName = document.getElementById('orderServiceName');
-        const orderFormContent = document.getElementById('orderFormContent');
-        const orderMsg = document.getElementById('orderMsg');
+        currencySelect.value = selectedCurrency;
 
         function updateBalanceDisplay() {
             const converted = userBalanceNGN * rates[selectedCurrency];
@@ -246,6 +304,78 @@
             balanceEl.textContent = `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
+        // Referral & Investment Setup
+        async function setupUserExtras(user) {
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            if (userSnap.exists()) {
+                userData = userSnap.data();
+                userBalanceNGN = userData.balance || 0;
+                
+                // Generate referral code if not exists
+                if (!userData.referralCode) {
+                    const code = 'HARPS-' + user.uid.substring(0, 8).toUpperCase();
+                    await updateDoc(userRef, { referralCode: code });
+                    userData.referralCode = code;
+                }
+                
+                document.getElementById('referralCode').textContent = userData.referralCode;
+                document.getElementById('refEarned').textContent = userData.refEarned || 0;
+                
+                // Load active investments count
+                const invQuery = query(collection(db, "investments"), where("uid", "==", user.uid), where("status", "==", "active"));
+                const invSnap = await getDocs(invQuery);
+                document.getElementById('activeInvest').textContent = invSnap.size;
+            }
+            updateBalanceDisplay();
+        }
+
+        // Copy Referral Link
+        document.getElementById('copyRefBtn').onclick = () => {
+            const link = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
+            navigator.clipboard.writeText(link);
+            alert('Referral link copied!');
+        };
+
+        // Investment Modal
+        document.getElementById('investBtn').onclick = () => document.getElementById('investModal').classList.add('active');
+        document.getElementById('closeInvestModal').onclick = () => document.getElementById('investModal').classList.remove('active');
+
+        document.getElementById('submitInvest').onclick = async () => {
+            const plan = document.getElementById('investPlan').value;
+            const amount = parseFloat(document.getElementById('investAmount').value);
+            
+            if (!amount || amount > userBalanceNGN) {
+                document.getElementById('investMsg').textContent = 'Insufficient balance';
+                document.getElementById('investMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                return;
+            }
+
+            const profitRates = { '7days-15': 0.15, '14days-25': 0.25, '30days-40': 0.40 };
+            const profit = amount * profitRates[plan];
+
+            await addDoc(collection(db, "investments"), {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                plan,
+                amount,
+                profit,
+                status: 'active',
+                timestamp: new Date()
+            });
+
+            // Deduct from balance
+            await updateDoc(doc(db, "users", currentUser.uid), { 
+                balance: userBalanceNGN - amount 
+            });
+
+            document.getElementById('investMsg').textContent = 'Investment started successfully!';
+            document.getElementById('investMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+            setTimeout(() => location.reload(), 1500);
+        };
+
+        // Rest of your existing code remains the same...
         async function loadServices() {
             try {
                 const [snap1, snap2] = await Promise.all([
@@ -254,15 +384,16 @@
                 ]);
 
                 allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
-                servicesCount.textContent = `${allServices.length} premium services available`;
+                document.getElementById('servicesCount').textContent = `${allServices.length} premium services available`;
                 renderServices(allServices);
             } catch (err) {
                 console.error(err);
-                servicesCount.textContent = "Error loading services";
+                document.getElementById('servicesCount').textContent = "Error loading services";
             }
         }
 
         function renderServices(services) {
+            const servicesGrid = document.getElementById('servicesGrid');
             servicesGrid.innerHTML = '';
             services.forEach(service => {
                 if (service.available === false) return;
@@ -275,10 +406,7 @@
                 card.className = 'service-card rounded-3xl overflow-hidden group';
                 card.innerHTML = `
                     <div class="relative h-48 overflow-hidden bg-black/50">
-                        <img src="${img}" 
-                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-                             alt="${service.name}"
-                             onerror="this.src='https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech'">
+                        <img src="${img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="${service.name}">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                         ${!isAuto ? '<span class="absolute top-4 right-4 text-xs bg-yellow-500/90 text-black px-3 py-1 rounded-full font-bold">Manual</span>' : ''}
                     </div>
@@ -297,7 +425,6 @@
                 servicesGrid.appendChild(card);
             });
 
-            // Bind events after all cards are in DOM
             document.querySelectorAll('.order-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
@@ -310,17 +437,18 @@
         }
 
         function openOrderModal(service) {
-            orderServiceName.textContent = service.name;
+            const orderModal = document.getElementById('orderModal');
+            document.getElementById('orderServiceName').textContent = service.name;
             const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
             
             const fieldsHtml = service.fields?.includes('link') ?
                 `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
 
-            orderFormContent.innerHTML = `
+            document.getElementById('orderFormContent').innerHTML = `
                 <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
                 ${fieldsHtml}
                 ${service.fields?.includes('quantity') ?
-                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
+                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
                 <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
             `;
 
@@ -346,19 +474,16 @@
                     createdAt: new Date()
                 });
 
-                orderMsg.textContent = 'Order placed! Check chat for updates.';
-                orderMsg.className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
-                setTimeout(() => orderModal.classList.remove('active'), 2000);
+                document.getElementById('orderMsg').textContent = 'Order placed! Check chat for updates.';
+                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+                setTimeout(() => document.getElementById('orderModal').classList.remove('active'), 2000);
             } catch (err) {
-                orderMsg.textContent = 'Error placing order.';
-                orderMsg.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                document.getElementById('orderMsg').textContent = 'Error placing order.';
+                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
             }
         }
 
-        document.getElementById('closeOrderModal').onclick = () => orderModal.classList.remove('active');
-        orderModal.addEventListener('click', (e) => {
-            if (e.target === orderModal) orderModal.classList.remove('active');
-        });
+        document.getElementById('closeOrderModal').onclick = () => document.getElementById('orderModal').classList.remove('active');
 
         // Chat System
         const chatWidget = document.getElementById('chatWidget');
@@ -429,21 +554,14 @@
             if (user) {
                 currentUser = user;
                 userName.textContent = user.displayName || 'User';
-
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    userBalanceNGN = userDoc.data().balance || 0;
-                    selectedCurrency = userDoc.data().currency || 'NGN';
-                    currencySelect.value = selectedCurrency;
-                }
-                updateBalanceDisplay();
+                await setupUserExtras(user);
                 loadServices();
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // Top-up - MANUAL ONLY
+        // Top-up
         document.getElementById('submitTopup').onclick = async () => {
             const amount = document.getElementById('topupAmount').value;
             const note = document.getElementById('topupNote').value;
@@ -477,6 +595,7 @@
 
         currencySelect.addEventListener('change', async (e) => {
             selectedCurrency = e.target.value;
+            localStorage.setItem('currency', selectedCurrency);
             updateBalanceDisplay();
             if (currentUser) {
                 await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
