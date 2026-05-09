@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,6 +164,7 @@
       updateProfile,
       sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -176,6 +178,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     let isLogin = false;
     const form = document.getElementById('authForm');
@@ -190,7 +193,6 @@
     const togglePassword = document.getElementById('togglePassword');
     const eyeIcon = document.getElementById('eyeIcon');
 
-    // Init lucide icons
     lucide.createIcons();
 
     function setMode(loginMode) {
@@ -216,13 +218,11 @@
 
     setMode(false);
 
-    // Toggle Login/Signup
     toggleLink.addEventListener('click', (e) => {
       e.preventDefault();
       setMode(!isLogin);
     });
 
-    // Toggle Password Visibility
     togglePassword.addEventListener('click', () => {
       const isPassword = passwordInput.type === 'password';
       passwordInput.type = isPassword ? 'text' : 'password';
@@ -230,7 +230,6 @@
       lucide.createIcons();
     });
 
-    // Forgot Password
     forgotLink.addEventListener('click', async () => {
       const email = document.getElementById('email').value;
       if (!email) {
@@ -262,15 +261,29 @@
       submitBtn.disabled = true;
 
       try {
+        let userCred;
         if (isLogin) {
-          await signInWithEmailAndPassword(auth, email, password);
+          userCred = await signInWithEmailAndPassword(auth, email, password);
         } else {
-          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+          userCred = await createUserWithEmailAndPassword(auth, email, password);
           await updateProfile(userCred.user, { displayName: fullname });
+          
+          // Create user doc for new users
+          await setDoc(doc(db, "users", userCred.user.uid), {
+            email: email,
+            fullName: fullname,
+            balance: 0,
+            status: 'active',
+            createdAt: new Date()
+          });
         }
-        window.location.href = "dashboard.html";
+        
+        // Redirect logic - checks for ?redirect=admin.html
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect') || 'dashboard.html';
+        window.location.href = redirectUrl;
+        
       } catch (error) {
-        // Clean up Firebase error message
         let errorMsg = error.message;
         if (error.code === 'auth/invalid-credential') {
           errorMsg = 'Invalid email or password';
