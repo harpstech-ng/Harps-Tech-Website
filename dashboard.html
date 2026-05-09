@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,19 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Harps Tech | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Playfair+Display:italic,wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #050505; color: #fff; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-       .glass-nav { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-       .hero-gradient { background: radial-gradient(circle at 30% 50%, rgba(0, 232, 255, 0.15) 0%, transparent 60%); }
-       .service-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; }
-       .service-card:hover { border-color: #00E8FF; transform: translateY(-5px); background: rgba(0, 232, 255, 0.02); }
-       .btn-premium { background: linear-gradient(90deg, #00E8FF, #0072FF); transition: all 0.2s; }
-       .btn-premium:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 232, 255, 0.4); }
-       .modal { display: none; }
-       .modal.active { display: flex; }
-       .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
+        body { background-color: #050505; color: #fff; font-family: 'Outfit', sans-serif; }
+      .glass-nav { background: rgba(8, 8, 8, 0.7); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .hero-gradient { background: radial-gradient(circle at 20% 30%, rgba(0, 232, 255, 0.12) 0%, transparent 50%); }
+      .service-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.35s cubic-bezier(.4,0,.2,1); }
+      .service-card:hover { border-color: #00E8FF; transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0, 232, 255, 0.15); }
+      .btn-premium { background: linear-gradient(90deg, #00E8FF, #0072FF); transition: all 0.25s; }
+      .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 232, 255, 0.35); }
+      .modal { display: none; }
+      .modal.active { display: flex; }
+      .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
+      .chat-bubble { animation: slideUp 0.3s ease; }
+       @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -25,12 +28,12 @@
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav py-4">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center font-bold text-black">H</div>
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center font-bold text-black text-lg">H</div>
                 <span class="text-2xl font-extrabold tracking-tighter uppercase">HARPS <span class="text-cyan-400">TECH</span></span>
             </div>
 
-            <div class="hidden lg:flex gap-8 text-xs font-bold uppercase tracking-widest text-gray-400">
+            <div class="hidden lg:flex gap-10 text-xs font-semibold uppercase tracking-widest text-gray-400">
                 <a href="#dashboard" class="hover:text-cyan-400 transition">Dashboard</a>
                 <a href="#services" class="hover:text-cyan-400 transition">Services</a>
                 <a href="#about" class="hover:text-cyan-400 transition">About</a>
@@ -38,35 +41,27 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <select class="bg-black/50 border-white/10 rounded-lg px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
+                <select class="bg-black/50 border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
                     <option value="NGN">₦ NGN</option>
                     <option value="USD">$ USD</option>
                     <option value="EUR">€ EUR</option>
                     <option value="GBP">£ GBP</option>
-                    <option value="GHS">₵ GHS</option>
-                    <option value="ZAR">R ZAR</option>
-                    <option value="KES">KSh KES</option>
-                    <option value="CAD">C$ CAD</option>
-                    <option value="AUD">A$ AUD</option>
-                    <option value="JPY">¥ JPY</option>
-                    <option value="CNY">¥ CNY</option>
-                    <option value="INR">₹ INR</option>
-                    <option value="AED">د.إ AED</option>
-                    <option value="SAR">﷼ SAR</option>
-                    <option value="TRY">₺ TRY</option>
                 </select>
-                <button id="settingsBtn" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
+                <button id="chatOpenBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                </button>
+                <button id="settingsBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
                     <i data-lucide="settings" class="w-5 h-5"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero / Dashboard Section -->
+    <!-- Hero -->
     <section id="dashboard" class="relative min-h-screen flex items-center pt-32 hero-gradient">
         <div class="max-w-7xl mx-auto px-6 w-full">
             <div class="mb-12">
-                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
+                <div class="inline-block px-4 py-1 border border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
                     Welcome back, <span id="userName">User</span>
                 </div>
                 <h1 class="text-5xl md:text-7xl font-extrabold leading-none mb-6 uppercase tracking-tighter">
@@ -74,167 +69,125 @@
                 </h1>
             </div>
 
-            <!-- Balance + Quick Actions -->
             <div class="grid lg:grid-cols-3 gap-6 mb-16">
-                <div class="lg:col-span-2 balance-card rounded-3xl p-8 md:p-12">
+                <div class="lg:col-span-2 balance-card rounded-3xl p-8 md:p-12 shadow-2xl shadow-cyan-500/20">
                     <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
                     <h2 class="text-5xl md:text-6xl font-extrabold text-black" id="balance">₦0.00</h2>
-                    <p class="text-black/60 text-sm mt-4">Balance is in NGN. Use the dropdown to convert. Contact support to top up.</p>
+                    <p class="text-black/60 text-sm mt-4">Balance is in NGN. Top-ups are processed manually after payment confirmation.</p>
                 </div>
 
                 <div class="space-y-4">
-                    <button onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})" class="w-full btn-premium text-black font-bold py-4 rounded-xl">
+                    <button onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})" class="w-full btn-premium text-black font-bold py-4 rounded-2xl">
                         Browse Services
                     </button>
-                    <button onclick="document.getElementById('support').scrollIntoView({behavior:'smooth'})" class="w-full border-white/20 hover:bg-white/5 text-white font-bold py-4 rounded-xl transition">
+                    <button onclick="document.getElementById('support').scrollIntoView({behavior:'smooth'})" class="w-full border-white/20 hover:bg-white/5 text-white font-bold py-4 rounded-2xl transition">
                         Contact Support
                     </button>
-                    <button id="requestTopupBtn" class="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-xl transition">
+                    <button id="requestTopupBtn" class="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-2xl transition">
                         Request Top Up
                     </button>
-                </div>
-            </div>
-
-            <!-- User Info Cards -->
-            <div class="grid md:grid-cols-3 gap-6 mb-16">
-                <div class="service-card p-6 rounded-2xl">
-                    <i data-lucide="mail" class="text-cyan-400 mb-3 w-5 h-5"></i>
-                    <p class="text-gray-500 text-xs uppercase">Email</p>
-                    <p class="text-lg font-semibold" id="userEmail">Loading...</p>
-                </div>
-                <div class="service-card p-6 rounded-2xl">
-                    <i data-lucide="calendar" class="text-cyan-400 mb-3 w-5 h-5"></i>
-                    <p class="text-gray-500 text-xs uppercase">Member Since</p>
-                    <p class="text-lg font-semibold" id="userCreated">Loading...</p>
-                </div>
-                <div class="service-card p-6 rounded-2xl">
-                    <i data-lucide="shield-check" class="text-cyan-400 mb-3 w-5 h-5"></i>
-                    <p class="text-gray-500 text-xs uppercase">Account Status</p>
-                    <p class="text-lg font-semibold text-green-400">Active</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Marketplace -->
+    <!-- Services -->
     <section id="services" class="py-24 px-6 bg-[#080808]">
         <div class="max-w-7xl mx-auto">
             <div class="mb-16">
                 <h2 class="text-4xl font-bold uppercase tracking-tighter">The <span class="text-cyan-400">Marketplace</span></h2>
                 <p class="text-gray-500 mt-2" id="servicesCount">Loading services...</p>
             </div>
-
-            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Services load here dynamically -->
+            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-24 px-6 border-t border-white/5">
+    <!-- Support -->
+    <section id="support" class="py-24 px-6 bg-black">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-cyan-500 font-mono text-xs tracking-[0.5em] uppercase mb-6">// The Agency</h2>
-            <h3 class="text-5xl font-bold mb-8 uppercase tracking-tighter">Engineering <span class="italic font-light text-gray-500">Without Limits.</span></h3>
-            <p class="text-xl text-gray-400 leading-relaxed font-light mb-12">
-                Harps Tech is a specialized software house focused on high-end AI automation and digital marketing. Founded by Praise Okugbe, we build enterprise-grade WhatsApp bots, SMM systems, and custom web solutions from mobile-first environments.
-            </p>
-            <div class="grid grid-cols-3 gap-8 border-y border-white/5 py-12">
-                <div><h4 class="text-3xl font-bold text-white">50+</h4><p class="text-gray-500 text-xs uppercase mt-1">Core Services</p></div>
-                <div><h4 class="text-3xl font-bold text-white">24/7</h4><p class="text-gray-500 text-xs uppercase mt-1">Bot Support</p></div>
-                <div><h4 class="text-3xl font-bold text-white">100%</h4><p class="text-gray-500 text-xs uppercase mt-1">Uptime</p></div>
+            <h2 class="text-5xl font-bold mb-6 uppercase tracking-tighter">Need <span class="text-cyan-400">Help?</span></h2>
+            <p class="text-gray-400 mb-10">Use the chat icon bottom right for instant support. I reply directly from the admin panel.</p>
+            <div class="flex justify-center gap-6">
+                <a href="mailto:okugbepraise@gmail.com" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+                    <i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i>
+                    <span>okugbepraise@gmail.com</span>
+                </a>
+                <a href="https://wa.me/2348141612736" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i>
+                    <span>WhatsApp</span>
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Support Section -->
-    <section id="support" class="py-24 px-6 bg-black relative overflow-hidden">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20">
+    <!-- Chat Widget -->
+    <div id="chatWidget" class="fixed bottom-6 right-6 w-96 max-w- bg-[#0a0a0a] border-white/10 rounded-3xl shadow-2xl shadow-cyan-500/20 hidden flex-col overflow-hidden z-50">
+        <div class="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 flex justify-between items-center">
             <div>
-                <h2 class="text-5xl font-bold mb-6 uppercase tracking-tighter">Need <br><span class="text-cyan-400">Help?</span></h2>
-                <p class="text-gray-400 mb-10">Reach out directly. We respond fast on WhatsApp and Email.</p>
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i></div>
-                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Email</p><p class="text-lg">okugbepraise@gmail.com</p></div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i></div>
-                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">WhatsApp</p><p class="text-lg">+234 814 161 2736</p></div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5 text-cyan-400"></i></div>
-                        <div><p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Response Time</p><p class="text-lg">Usually under 2 hours</p></div>
-                    </div>
-                </div>
+                <h3 class="font-bold text-black">Live Support</h3>
+                <p class="text-xs text-black/70">We usually reply within 2 hours</p>
             </div>
-
-            <form id="contactForm" class="space-y-4">
-                <input type="text" id="contactName" placeholder="FULL NAME" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition" required>
-                <input type="email" id="contactEmail" placeholder="EMAIL ADDRESS" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition" required>
-                <select id="contactService" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition text-gray-400">
-                    <option>General Inquiry</option>
-                    <option>Service Request</option>
-                    <option>Top Up Request</option>
-                    <option>Technical Support</option>
-                </select>
-                <textarea rows="4" id="contactMessage" placeholder="PROJECT BRIEF" class="w-full bg-white/5 border-white/10 p-4 rounded-xl focus:border-cyan-500 outline-none transition" required></textarea>
-                <button type="submit" class="w-full btn-premium text-black font-bold py-4 rounded-xl">SEND MESSAGE</button>
-                <div id="contactMsg" class="hidden p-3 rounded-lg text-sm"></div>
-            </form>
+            <button id="chatCloseBtn" class="text-black/80 hover:text-black">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
         </div>
-    </section>
-
-    <!-- Order Modal -->
-    <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
-                <button id="closeOrderModal" class="text-gray-500 hover:text-white">
-                    <i data-lucide="x" class="w-6 h-6"></i>
+        <div id="chatMessages" class="h-80 overflow-y-auto p-4 space-y-3">
+            <div class="chat-bubble bg-white/5 p-3 rounded-2xl text-sm">
+                <p class="text-cyan-400 font-semibold mb-1">Harps Tech Support</p>
+                <p>Hello! How can I help you today?</p>
+            </div>
+        </div>
+        <div class="p-4 border-t border-white/10">
+            <div class="flex gap-2">
+                <input id="chatInput" type="text" placeholder="Type your message..." class="flex-1 bg-white/5 border-white/10 rounded-xl px-4 py-2 text-sm focus:border-cyan-500 outline-none">
+                <button id="chatSendBtn" class="px-4 py-2 bg-cyan-500 text-black font-bold rounded-xl hover:bg-cyan-400 transition">
+                    <i data-lucide="send" class="w-4 h-4"></i>
                 </button>
             </div>
-            <div id="orderFormContent"></div>
-            <div id="orderMsg" class="hidden mt-3 p-3 rounded-lg text-sm"></div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
+    <!-- Modals: Order, Settings, Topup -->
+    <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
+                <button id="closeOrderModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div id="orderFormContent"></div>
+            <div id="orderMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
+        </div>
+    </div>
+
     <div id="settingsModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Account Settings</h3>
-                <button id="closeModal" class="text-gray-500 hover:text-white">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+                <button id="closeModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-
             <div class="space-y-6">
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Change Password</label>
-                    <div id="pwMsg" class="hidden mb-3 p-3 rounded-lg text-sm"></div>
+                    <div id="pwMsg" class="hidden mb-3 p-3 rounded-xl text-sm"></div>
                     <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
                     <button id="changePwBtn" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Update Password</button>
                 </div>
-
                 <div class="border-t border-white/10 pt-6">
-                    <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Session</label>
                     <button id="logoutBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition">Logout</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Up Modal -->
     <div id="topupModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-2xl max-w-md w-full p-8">
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Request Top Up</h3>
-                <button id="closeTopupModal" class="text-gray-500 hover:text-white">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+                <button id="closeTopupModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <p class="text-gray-400 text-sm mb-4">Send payment to the account below, then submit this form. We'll credit your balance manually within 2 hours.</p>
-            <div class="bg-white/5 p-4 rounded-xl mb-4">
+            <p class="text-gray-400 text-sm mb-4">Pay to the account below, then submit this form. I’ll credit your balance manually within 2 hours.</p>
+            <div class="bg-white/5 p-4 rounded-2xl mb-4 border-white/10">
                 <p class="text-xs text-gray-500">Bank: Opay</p>
                 <p class="text-lg font-bold">Account: 8141612736</p>
                 <p class="text-sm">Name: Okugbe Praise</p>
@@ -242,19 +195,18 @@
             <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
             <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
-            <div id="topupMsg" class="hidden mt-3 p-3 rounded-lg text-sm"></div>
+            <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-xs tracking-[0.2em] uppercase">
-        © 2026 HARPS TECH // ARCHITECTED BY PRAISE OKUGBE // ALL SYSTEMS OPERATIONAL
+        © 2026 HARPS TECH // CRAFTED WITH PRECISION
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -262,44 +214,28 @@
             projectId: "harps-tech-95856",
             storageBucket: "harps-tech-95856.firebasestorage.app",
             messagingSenderId: "937702997468",
-            appId: "1:937702997468:web:ca65a04fa1b026b5506319",
-            measurementId: "G-P7HRDDTXMH"
+            appId: "1:937702997468:web:ca65a04fa1b026b5506319"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const rates = {
-            NGN: 1, USD: 0.0012, EUR: 0.0011, GBP: 0.00095, GHS: 0.015, ZAR: 0.022,
-            KES: 0.17, CAD: 0.0016, AUD: 0.0018, JPY: 0.18, CNY: 0.0087, INR: 0.10,
-            AED: 0.0044, SAR: 0.0045, TRY: 0.038
-        };
-
-        const currencySymbols = {
-            NGN: '₦', USD: '$', EUR: '€', GBP: '£', GHS: '₵', ZAR: 'R',
-            KES: 'KSh', CAD: 'C$', AUD: 'A$', JPY: '¥', CNY: '¥',
-            INR: '₹', AED: 'د.إ', SAR: '﷼', TRY: '₺'
-        };
+        const rates = { NGN: 1, USD: 0.0012, EUR: 0.0011, GBP: 0.00095 };
+        const currencySymbols = { NGN: '₦', USD: '$', EUR: '€', GBP: '£' };
 
         let currentUser = null;
         let userBalanceNGN = 0;
         let selectedCurrency = 'NGN';
         let allServices = [];
+        let chatUnsubscribe = null;
 
-        // Elements
+        // DOM elements
         const userName = document.getElementById('userName');
-        const userEmail = document.getElementById('userEmail');
-        const userCreated = document.getElementById('userCreated');
         const balanceEl = document.getElementById('balance');
         const currencySelect = document.getElementById('currencySelect');
         const servicesGrid = document.getElementById('servicesGrid');
         const servicesCount = document.getElementById('servicesCount');
-        const orderModal = document.getElementById('orderModal');
-        const orderServiceName = document.getElementById('orderServiceName');
-        const orderFormContent = document.getElementById('orderFormContent');
-        const orderMsg = document.getElementById('orderMsg');
-        const closeOrderModal = document.getElementById('closeOrderModal');
 
         function updateBalanceDisplay() {
             const converted = userBalanceNGN * rates[selectedCurrency];
@@ -313,13 +249,9 @@
                     getDoc(doc(db, 'config', 'services_part1')),
                     getDoc(doc(db, 'config', 'services_part2'))
                 ]);
-                
-                allServices = [
-                    ...(snap1.data()?.list || []), 
-                    ...(snap2.data()?.list || [])
-                ];
-                
-                servicesCount.textContent = `${allServices.length} services available`;
+
+                allServices = [...(snap1.data()?.list || []),...(snap2.data()?.list || [])];
+                servicesCount.textContent = `${allServices.length} premium services available`;
                 renderServices(allServices);
             } catch (err) {
                 console.error(err);
@@ -331,27 +263,32 @@
             servicesGrid.innerHTML = '';
             services.forEach(service => {
                 if (service.available === false) return;
-                
-                const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
-                const priceText = service.pricePerUnit ? `₦${service.pricePerUnit}/unit` : 'Custom Quote';
-                const icon = service.category === 'TikTok' ? 'trending-up' : 
-                             service.category === 'Instagram' ? 'instagram' :
-                             service.category === 'YouTube' ? 'youtube' : 'zap';
+
+                const isAuto =!service.id.startsWith('srv_') &&!service.id.startsWith('dummy');
+                const priceText = service.pricePerUnit? `₦${service.pricePerUnit.toLocaleString()}/unit` : 'Custom Quote';
+                const img = service.image || 'https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech';
 
                 const card = document.createElement('div');
-                card.className = 'service-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer';
+                card.className = 'service-card rounded-3xl overflow-hidden group cursor-pointer';
                 card.innerHTML = `
-                    <i data-lucide="${icon}" class="text-cyan-400 mb-4 w-5 h-5"></i>
-                    <div class="flex items-center gap-2 mb-1">
-                        <h3 class="font-bold text-lg">${service.name}</h3>
-                        ${!isAuto ? '<span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">Manual</span>' : ''}
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="${service.name}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        ${!isAuto? '<span class="absolute top-4 right-4 text-xs bg-yellow-500/90 text-black px-3 py-1 rounded-full font-bold">Manual</span>' : ''}
                     </div>
-                    <p class="text-gray-500 text-xs mb-2">${service.category}</p>
-                    ${service.min ? `<p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
-                    <div class="text-cyan-400 font-bold text-sm">${priceText}</div>
-                    <button class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-lg opacity-0 group-hover:opacity-100 transition order-btn">
-                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                    </button>
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-2">
+                            <h3 class="font-bold text-lg leading-tight">${service.name}</h3>
+                        </div>
+                        <p class="text-gray-500 text-xs mb-3">${service.category}</p>
+                        ${service.min? `<p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
+                        <div class="flex items-center justify-between">
+                            <div class="text-cyan-400 font-bold text-lg">${priceText}</div>
+                            <button class="bg-white text-black px-4 py-2 rounded-xl font-semibold text-sm opacity-0 group-hover:opacity-100 transition order-btn">
+                                Order
+                            </button>
+                        </div>
+                    </div>
                 `;
                 card.querySelector('.order-btn').addEventListener('click', () => openOrderModal(service));
                 servicesGrid.appendChild(card);
@@ -360,102 +297,123 @@
         }
 
         function openOrderModal(service) {
-            orderServiceName.textContent = service.name;
-            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
-            
-            let fieldsHtml = '';
-            if (service.fields && service.fields.includes('link')) {
-                fieldsHtml += `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>`;
-            }
-            if (service.fields && service.fields.includes('quantity')) {
-                fieldsHtml += `<input type="number" id="orderQty" placeholder="Quantity (Min: ${service.min}, Max: ${service.max})" 
-                       min="${service.min}" max="${service.max}" 
-                       class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>`;
-            }
-            if (service.fields && service.fields.includes('details')) {
-                fieldsHtml += `<textarea id="orderDetails" placeholder="Details/Requirements" rows="3" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required></textarea>`;
-            }
-            
-            orderFormContent.innerHTML = `
-                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
+            document.getElementById('orderServiceName').textContent = service.name;
+            const fieldsHtml = service.fields?.includes('link')?
+                `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
+
+            document.getElementById('orderFormContent').innerHTML = `
+                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto? 'Auto Delivery' : 'Manual Delivery'}</p>
                 ${fieldsHtml}
+                ${service.fields?.includes('quantity')?
+                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
                 <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
             `;
-            
-            document.getElementById('submitOrder').addEventListener('click', () => submitOrder(service));
-            orderModal.classList.add('active');
+
+            document.getElementById('submitOrder').onclick = () => submitOrder(service);
+            document.getElementById('orderModal').classList.add('active');
+            lucide.createIcons();
         }
 
         async function submitOrder(service) {
             const link = document.getElementById('orderLink')?.value || '';
             const qty = document.getElementById('orderQty')?.value || 1;
-            const details = document.getElementById('orderDetails')?.value || '';
-            
-            if ((service.fields?.includes('link') && !link) || (service.fields?.includes('quantity') && !qty)) {
-                showOrderMsg('Fill all required fields', 'red');
-                return;
-            }
-            
-            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
-            
+
             try {
                 await addDoc(collection(db, "orders"), {
                     userId: currentUser.uid,
                     userEmail: currentUser.email,
                     serviceId: service.id,
                     serviceName: service.name,
-                    category: service.category,
-                    link: link,
-                    quantity: parseInt(qty),
-                    details: details,
-                    pricePerUnit: service.pricePerUnit || 0,
+                    link, quantity: parseInt(qty),
                     totalPrice: (service.pricePerUnit || 0) * parseInt(qty),
-                    isAuto: isAuto,
                     status: 'pending',
                     createdAt: new Date()
                 });
-                
-                showOrderMsg('Order placed! Check WhatsApp for updates.', 'green');
-                setTimeout(() => {
-                    orderModal.classList.remove('active');
-                    orderMsg.className = 'hidden';
-                }, 2000);
+
+                document.getElementById('orderMsg').textContent = 'Order placed! Check chat for updates.';
+                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+                setTimeout(() => document.getElementById('orderModal').classList.remove('active'), 2000);
             } catch (err) {
-                showOrderMsg('Error placing order. Try again.', 'red');
+                document.getElementById('orderMsg').textContent = 'Error placing order.';
+                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
             }
         }
 
-        function showOrderMsg(msg, type) {
-            orderMsg.textContent = msg;
-            orderMsg.className = `mt-3 p-3 rounded-lg text-sm ${type === 'green' ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`;
+        // Chat System
+        const chatWidget = document.getElementById('chatWidget');
+        const chatOpenBtn = document.getElementById('chatOpenBtn');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        chatOpenBtn.onclick = () => {
+            chatWidget.classList.remove('hidden');
+            chatWidget.classList.add('flex');
+            if (currentUser &&!chatUnsubscribe) loadChatMessages();
+        };
+        chatCloseBtn.onclick = () => {
+            chatWidget.classList.add('hidden');
+            if (chatUnsubscribe) chatUnsubscribe();
+            chatUnsubscribe = null;
+        };
+
+        async function sendChatMessage() {
+            const text = chatInput.value.trim();
+            if (!text ||!currentUser) return;
+
+            await addDoc(collection(db, "chat_messages"), {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                message: text,
+                sender: 'user',
+                timestamp: new Date(),
+                read: false
+            });
+            chatInput.value = '';
         }
 
-        closeOrderModal.addEventListener('click', () => orderModal.classList.remove('active'));
-        orderModal.addEventListener('click', (e) => {
-            if (e.target === orderModal) orderModal.classList.remove('active');
+        function loadChatMessages() {
+            const q = query(
+                collection(db, "chat_messages"),
+                where("uid", "==", currentUser.uid),
+                orderBy("timestamp", "asc")
+            );
+            chatUnsubscribe = onSnapshot(q, (snapshot) => {
+                chatMessages.innerHTML = `<div class="chat-bubble bg-white/5 p-3 rounded-2xl text-sm">
+                    <p class="text-cyan-400 font-semibold mb-1">Harps Tech Support</p>
+                    <p>Hello! How can I help you today?</p>
+                </div>`;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isUser = data.sender === 'user';
+                    chatMessages.innerHTML += `
+                        <div class="chat-bubble ${isUser? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-2xl text-sm">
+                            <p class="${isUser? 'text-cyan-400' : 'text-gray-400'} font-semibold mb-1">${isUser? 'You' : 'Support'}</p>
+                            <p>${data.message}</p>
+                        </div>
+                    `;
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        chatSendBtn.onclick = sendChatMessage;
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
         });
 
-        // Auth Check
+        // Auth
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 userName.textContent = user.displayName || 'User';
-                userEmail.textContent = user.email;
-                userCreated.textContent = new Date(user.metadata.creationTime).toLocaleDateString();
 
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
                     userBalanceNGN = userDoc.data().balance || 0;
                     selectedCurrency = userDoc.data().currency || 'NGN';
                     currencySelect.value = selectedCurrency;
-                } else {
-                    await setDoc(doc(db, "users", user.uid), {
-                        email: user.email,
-                        name: user.displayName || "",
-                        balance: 0,
-                        currency: 'NGN',
-                        createdAt: new Date()
-                    });
                 }
                 updateBalanceDisplay();
                 loadServices();
@@ -464,83 +422,12 @@
             }
         });
 
-        // Currency Change
-        currencySelect.addEventListener('change', async (e) => {
-            selectedCurrency = e.target.value;
-            updateBalanceDisplay();
-            if (currentUser) {
-                await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
-            }
-        });
-
-        // Modals
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsModal = document.getElementById('settingsModal');
-        const closeModal = document.getElementById('closeModal');
-        const pwMsg = document.getElementById('pwMsg');
-        const changePwBtn = document.getElementById('changePwBtn');
-        const newPassword = document.getElementById('newPassword');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const requestTopupBtn = document.getElementById('requestTopupBtn');
-        const topupModal = document.getElementById('topupModal');
-        const closeTopupModal = document.getElementById('closeTopupModal');
-        const submitTopup = document.getElementById('submitTopup');
-        const topupMsg = document.getElementById('topupMsg');
-        const contactForm = document.getElementById('contactForm');
-        const contactMsg = document.getElementById('contactMsg');
-
-        settingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
-        closeModal.addEventListener('click', () => settingsModal.classList.remove('active'));
-        settingsModal.addEventListener('click', (e) => {
-            if (e.target === settingsModal) settingsModal.classList.remove('active');
-        });
-
-        requestTopupBtn.addEventListener('click', () => topupModal.classList.add('active'));
-        closeTopupModal.addEventListener('click', () => topupModal.classList.remove('active'));
-        topupModal.addEventListener('click', (e) => {
-            if (e.target === topupModal) topupModal.classList.remove('active');
-        });
-
-        // Change Password
-        changePwBtn.addEventListener('click', async () => {
-            const password = newPassword.value;
-            pwMsg.className = 'hidden mb-3 p-3 rounded-lg text-sm';
-            if (password.length < 6) {
-                pwMsg.textContent = 'Password must be at least 6 characters';
-                pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
-                return;
-            }
-            changePwBtn.disabled = true;
-            changePwBtn.textContent = 'Updating...';
-            try {
-                await updatePassword(auth.currentUser, password);
-                pwMsg.textContent = 'Password updated successfully!';
-                pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
-                newPassword.value = '';
-            } catch (error) {
-                pwMsg.textContent = error.message;
-                pwMsg.className = 'mb-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
-            } finally {
-                changePwBtn.disabled = false;
-                changePwBtn.textContent = 'Update Password';
-            }
-        });
-
-        // Logout
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-            window.location.href = "login.html";
-        });
-
-        // Submit Top Up Request
-        submitTopup.addEventListener('click', async () => {
+        // Top-up - MANUAL ONLY, no auto credit
+        document.getElementById('submitTopup').onclick = async () => {
             const amount = document.getElementById('topupAmount').value;
             const note = document.getElementById('topupNote').value;
-            if (!amount || amount <= 0) {
-                topupMsg.textContent = 'Enter a valid amount';
-                topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
-                return;
-            }
+            if (!amount || amount <= 0) return;
+
             try {
                 await addDoc(collection(db, "topup_requests"), {
                     uid: currentUser.uid,
@@ -550,57 +437,24 @@
                     status: 'pending',
                     createdAt: new Date()
                 });
-                
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    balance: userBalanceNGN + parseFloat(amount)
-                });
-                
-                userBalanceNGN += parseFloat(amount);
-                updateBalanceDisplay();
-                
-                topupMsg.textContent = 'Request sent! Check WhatsApp/Email for confirmation.';
-                topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
+
+                document.getElementById('topupMsg').textContent = 'Request sent! I’ll credit your account after confirming payment.';
+                document.getElementById('topupMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
                 document.getElementById('topupAmount').value = '';
                 document.getElementById('topupNote').value = '';
             } catch (err) {
-                topupMsg.textContent = 'Error sending request. Try WhatsApp directly.';
-                topupMsg.className = 'mt-3 p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
+                document.getElementById('topupMsg').textContent = 'Error sending request.';
             }
-        });
+        };
 
-        // Contact Form
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const service = document.getElementById('contactService').value;
-            const message = document.getElementById('contactMessage').value;
-
-            try {
-                await addDoc(collection(db, "messages"), {
-                    name, email, service, message,
-                    userId: currentUser? currentUser.uid : null,
-                    createdAt: new Date()
-                });
-                contactMsg.textContent = 'Message sent! I\'ll reply on WhatsApp or Email.';
-                contactMsg.className = 'p-3 rounded-lg text-sm bg-green-900/30 text-green-400';
-                contactForm.reset();
-            } catch (err) {
-                contactMsg.textContent = 'Error sending message. Contact me on WhatsApp.';
-                contactMsg.className = 'p-3 rounded-lg text-sm bg-red-900/30 text-red-400';
-            }
-        });
+        // Other handlers
+        document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
+        document.getElementById('closeModal').onclick = () => document.getElementById('settingsModal').classList.remove('active');
+        document.getElementById('requestTopupBtn').onclick = () => document.getElementById('topupModal').classList.add('active');
+        document.getElementById('closeTopupModal').onclick = () => document.getElementById('topupModal').classList.remove('active');
+        document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href = "login.html"; };
 
         lucide.createIcons();
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
     </script>
 </body>
 </html>
