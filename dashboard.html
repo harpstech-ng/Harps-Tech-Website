@@ -8,13 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --bg: #050505;
-            --card: rgba(255,255,255,0.03);
-            --border: rgba(255,255,255,0.08);
-            --accent: #00E8FF;
-            --accent-2: #0072FF;
-        }
+        :root { --bg: #050505; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --accent: #00E8FF; --accent-2: #0072FF; }
         body { background-color: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; }
         .glass-nav { background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
         .service-card { background: var(--card); border: 1px solid var(--border); transition: all 0.35s cubic-bezier(.4,0,.2,1); }
@@ -46,24 +40,12 @@
             <span class="text-xl font-extrabold tracking-tighter uppercase">HARPS <span class="text-cyan-400">TECH</span></span>
         </div>
         <nav class="space-y-2">
-            <a href="#" data-tab="overview" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-cyan-400">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Overview
-            </a>
-            <a href="#" data-tab="services" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
-                <i data-lucide="shopping-bag" class="w-5 h-5"></i> Services
-            </a>
-            <a href="#" data-tab="investments" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
-                <i data-lucide="trending-up" class="w-5 h-5"></i> Investments
-            </a>
-            <a href="#" data-tab="referrals" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
-                <i data-lucide="users" class="w-5 h-5"></i> Referrals
-            </a>
-            <a href="#" data-tab="transactions" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
-                <i data-lucide="receipt" class="w-5 h-5"></i> Transactions
-            </a>
-            <a href="#" data-tab="support" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
-                <i data-lucide="headset" class="w-5 h-5"></i> Support
-            </a>
+            <a href="#" data-tab="overview" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-cyan-400"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Overview</a>
+            <a href="#" data-tab="services" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400"><i data-lucide="shopping-bag" class="w-5 h-5"></i> Services</a>
+            <a href="#" data-tab="investments" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400"><i data-lucide="trending-up" class="w-5 h-5"></i> Investments</a>
+            <a href="#" data-tab="referrals" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400"><i data-lucide="users" class="w-5 h-5"></i> Referrals</a>
+            <a href="#" data-tab="transactions" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400"><i data-lucide="receipt" class="w-5 h-5"></i> Transactions</a>
+            <a href="#" data-tab="support" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400"><i data-lucide="headset" class="w-5 h-5"></i> Support</a>
         </nav>
         <div class="absolute bottom-6 left-6 right-6">
             <button id="logoutBtnSidebar" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-600/10 hover:bg-red-600/20 text-red-400">
@@ -75,68 +57,33 @@
     <div class="lg:ml-64 min-h-screen">
         <nav class="sticky top-0 z-40 glass-nav py-4 px-6">
             <div class="flex justify-between items-center">
-                <button id="menuToggle" class="lg:hidden w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-
+                <button id="menuToggle" class="lg:hidden w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center"><i data-lucide="menu" class="w-5 h-5"></i></button>
                 <div class="flex items-center gap-3">
                     <select class="bg-black/50 border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
-                        <option value="NGN">₦ NGN</option>
-                        <option value="USD">$ USD</option>
-                        <option value="EUR">€ EUR</option>
-                        <option value="GBP">£ GBP</option>
-                        <option value="CAD">C$ CAD</option>
-                        <option value="AUD">A$ AUD</option>
-                        <option value="KES">KSh KES</option>
-                        <option value="GHS">₵ GHS</option>
-                        <option value="ZAR">R ZAR</option>
-                        <option value="UGX">USh UGX</option>
-                        <option value="TZS">TSh TZS</option>
-                        <option value="AED">د.إ AED</option>
-                        <option value="SAR">﷼ SAR</option>
-                        <option value="BTC">₿ BTC</option>
-                        <option value="ETH">Ξ ETH</option>
+                        <option value="NGN">₦ NGN</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option>
                     </select>
                     <button id="chatOpenBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition relative">
                         <i data-lucide="message-circle" class="w-5 h-5"></i>
                         <span id="chatBadge" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden"></span>
                     </button>
-                    <button id="settingsBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
-                        <i data-lucide="settings" class="w-5 h-5"></i>
-                    </button>
+                    <button id="settingsBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition"><i data-lucide="settings" class="w-5 h-5"></i></button>
                 </div>
             </div>
         </nav>
 
         <main class="p-6 lg:p-10">
             <div class="mb-8">
-                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-4">
-                    Welcome back, <span id="userName">User</span>
-                </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold leading-none uppercase tracking-tighter">
-                    Your <span class="italic font-light text-gray-400 font-['Playfair_Display']">Control Center</span>
-                </h1>
+                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-4">Welcome back, <span id="userName">User</span></div>
+                <h1 class="text-4xl md:text-5xl font-extrabold leading-none uppercase tracking-tighter">Your <span class="italic font-light text-gray-400 font-['Playfair_Display']">Control Center</span></h1>
             </div>
 
             <!-- Overview Tab -->
             <div id="tab-overview" class="tab-content active">
                 <div class="grid md:grid-cols-4 gap-4 mb-8">
-                    <div class="stat-card">
-                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Balance</p>
-                        <p class="text-2xl font-bold" id="balance">₦0.00</p>
-                    </div>
-                    <div class="stat-card">
-                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Referral Earnings</p>
-                        <p class="text-2xl font-bold text-cyan-400" id="refEarned">₦0</p>
-                    </div>
-                    <div class="stat-card">
-                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Active Investments</p>
-                        <p class="text-2xl font-bold" id="activeInvest">0</p>
-                    </div>
-                    <div class="stat-card">
-                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Total Orders</p>
-                        <p class="text-2xl font-bold" id="totalOrders">0</p>
-                    </div>
+                    <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Balance</p><p class="text-2xl font-bold" id="balance">₦0.00</p></div>
+                    <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Referral Earnings</p><p class="text-2xl font-bold text-cyan-400" id="refEarned">₦0</p></div>
+                    <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Active Investments</p><p class="text-2xl font-bold" id="activeInvest">0</p></div>
+                    <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Total Orders</p><p class="text-2xl font-bold" id="totalOrders">0</p></div>
                 </div>
 
                 <div class="grid lg:grid-cols-3 gap-6 mb-10">
@@ -195,14 +142,23 @@
                 <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Support</h2>
                 <div class="card max-w-2xl">
                     <p class="text-gray-400 mb-6">Use the chat icon bottom right for instant support. I reply directly from the admin panel.</p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="mailto:okugbepraise@gmail.com" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition flex-1">
+                    
+                    <div class="space-y-3">
+                        <a href="https://chat.whatsapp.com/CJuEnldG4UuEzuSRaLSMz6" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-green-600/20 hover:bg-green-600/30 rounded-2xl transition">
+                            <i data-lucide="users" class="w-5 h-5 text-green-400"></i>
+                            <span class="font-semibold">Join WhatsApp Group</span>
+                        </a>
+                        <a href="https://whatsapp.com/channel/0029VbCj5vI7DAWyvVlz4n0T" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-green-600/20 hover:bg-green-600/30 rounded-2xl transition">
+                            <i data-lucide="megaphone" class="w-5 h-5 text-green-400"></i>
+                            <span class="font-semibold">Follow WhatsApp Channel</span>
+                        </a>
+                        <a href="https://www.tiktok.com/@harpstechofficialpage" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-black/50 hover:bg-black/70 rounded-2xl transition">
+                            <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                            <span class="font-semibold">Follow on TikTok</span>
+                        </a>
+                        <a href="mailto:okugbepraise@gmail.com" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition">
                             <i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i>
                             <span>okugbepraise@gmail.com</span>
-                        </a>
-                        <a href="https://wa.me/2348141612736" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition flex-1">
-                            <i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i>
-                            <span>WhatsApp</span>
                         </a>
                     </div>
                 </div>
@@ -213,26 +169,19 @@
     <!-- Chat Widget -->
     <div id="chatWidget" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] bg-[#0a0a0a] border-white/10 rounded-3xl shadow-2xl shadow-cyan-500/20 hidden flex-col overflow-hidden z-50">
         <div class="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 flex justify-between items-center">
-            <div>
-                <h3 class="font-bold text-black">Live Support</h3>
-                <p class="text-xs text-black/70">Admin replies show here instantly</p>
-            </div>
-            <button id="chatCloseBtn" class="text-black/80 hover:text-black">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+            <div><h3 class="font-bold text-black">Live Support</h3><p class="text-xs text-black/70">Admin replies show here instantly</p></div>
+            <button id="chatCloseBtn" class="text-black/80 hover:text-black"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <div id="chatMessages" class="h-80 overflow-y-auto p-4 space-y-3"></div>
         <div class="p-4 border-t border-white/10">
             <div class="flex gap-2">
                 <input id="chatInput" type="text" placeholder="Type your message..." class="flex-1 bg-white/5 border-white/10 rounded-xl px-4 py-2 text-sm focus:border-cyan-500 outline-none">
-                <button id="chatSendBtn" class="px-4 py-2 bg-cyan-500 text-black font-bold rounded-xl hover:bg-cyan-400 transition">
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                </button>
+                <button id="chatSendBtn" class="px-4 py-2 bg-cyan-500 text-black font-bold rounded-xl hover:bg-cyan-400 transition"><i data-lucide="send" class="w-4 h-4"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- Order Modal -->
+    <!-- Modals: Order, Settings, Invest, Withdraw, Topup -->
     <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -244,7 +193,6 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
     <div id="settingsModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -263,7 +211,6 @@
         </div>
     </div>
 
-    <!-- Invest Modal -->
     <div id="investModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -277,20 +224,16 @@
             </select>
             <input type="number" id="investAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
             <button id="submitInvest" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Invest Now</button>
-            <div id="investMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8 max-h- overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Withdraw Investment</h3>
                 <button id="closeWithdrawModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <select id="withdrawSelect" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
-                <option>Loading...</option>
-            </select>
+            <select id="withdrawSelect" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4"><option>Loading...</option></select>
             <div class="space-y-3">
                 <p class="text-sm text-gray-400">Enter bank details for payment</p>
                 <input type="text" id="bankName" placeholder="Bank Name" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
@@ -298,11 +241,9 @@
                 <input type="text" id="accountNumber" placeholder="Account Number" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
             </div>
             <button id="submitWithdraw" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl mt-4">Request Withdrawal</button>
-            <div id="withdrawMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
-    <!-- Topup Modal -->
     <div id="topupModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -317,7 +258,6 @@
             <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
             <textarea id="topupNote" placeholder="Payment reference" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
-            <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
@@ -339,8 +279,8 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const rates = { NGN: 1, USD: 0.0012, EUR: 0.0011, GBP: 0.00095, CAD: 0.0016, AUD: 0.0018, KES: 0.17, GHS: 0.018, ZAR: 0.022, UGX: 4.5, TZS: 3.1, AED: 0.0044, SAR: 0.0045, BTC: 0.000018, ETH: 0.00045 };
-        const currencySymbols = { NGN: '₦', USD: '$', EUR: '€', GBP: '£', CAD: 'C$', AUD: 'A$', KES: 'KSh', GHS: '₵', ZAR: 'R', UGX: 'USh', TZS: 'TSh', AED: 'د.إ', SAR: '﷼', BTC: '₿', ETH: 'Ξ' };
+        const rates = { NGN: 1, USD: 0.0012, EUR: 0.0011 };
+        const currencySymbols = { NGN: '₦', USD: '$', EUR: '€' };
 
         let currentUser = null;
         let userBalanceNGN = 0;
@@ -356,8 +296,7 @@
             const rate = rates[currency] || 1;
             const converted = amount * rate;
             const symbol = currencySymbols[currency] || currency;
-            const decimals = ['BTC', 'ETH'].includes(currency) ? 8 : 2;
-            return `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})}`;
+            return `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
         function updateBalanceDisplay() {
@@ -378,17 +317,14 @@
         async function loadUserData(user) {
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
-
             if (userSnap.exists()) {
                 userData = userSnap.data();
                 userBalanceNGN = userData.balance || 0;
-
                 if (!userData.referralCode) {
                     const code = 'HARPS-' + user.uid.substring(0, 8).toUpperCase();
                     await updateDoc(userRef, { referralCode: code });
                     userData.referralCode = code;
                 }
-
                 document.getElementById('referralLink').textContent = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
                 document.getElementById('refEarned').textContent = formatCurrency(userData.refEarned || 0, selectedCurrency);
             }
@@ -396,40 +332,23 @@
         }
 
         async function loadServices() {
-            try {
-                const [snap1, snap2] = await Promise.all([
-                    getDoc(doc(db, 'config', 'services_part1')),
-                    getDoc(doc(db, 'config', 'services_part2'))
-                ]);
-
-                allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
-                
-                if (allServices.length === 0) {
-                    document.getElementById('servicesCount').textContent = "No services found. Upload services in admin panel.";
-                    document.getElementById('servicesGrid').innerHTML = '';
-                    return;
-                }
-
-                document.getElementById('servicesCount').textContent = `${allServices.length} premium services available`;
-                renderServices(allServices);
-            } catch (err) {
-                console.error("Error loading services:", err);
-                document.getElementById('servicesCount').textContent = "Error loading services";
-                document.getElementById('servicesGrid').innerHTML = `<p class="text-red-400">Error: ${err.message}</p>`;
-            }
+            const [snap1, snap2] = await Promise.all([
+                getDoc(doc(db, 'config', 'services_part1')),
+                getDoc(doc(db, 'config', 'services_part2'))
+            ]);
+            allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
+            document.getElementById('servicesCount').textContent = `${allServices.length} premium services available`;
+            renderServices(allServices);
         }
 
         function renderServices(services) {
             const servicesGrid = document.getElementById('servicesGrid');
             servicesGrid.innerHTML = '';
-            
             services.forEach(service => {
                 if (service.available === false) return;
-
                 const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
                 const priceText = service.pricePerUnit ? `₦${service.pricePerUnit.toLocaleString()}/unit` : 'Custom Quote';
                 const img = service.image || 'https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech';
-
                 const card = document.createElement('div');
                 card.className = 'service-card rounded-2xl overflow-hidden group';
                 card.innerHTML = `
@@ -444,15 +363,12 @@
                         ${service.min ? `<p class="text-gray-400 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
                         <div class="flex items-center justify-between">
                             <div class="text-cyan-400 font-bold text-lg">${priceText}</div>
-                            <button class="bg-cyan-500 text-black px-4 py-2 rounded-xl font-semibold text-sm order-btn" data-id="${service.id}">
-                                Order
-                            </button>
+                            <button class="bg-cyan-500 text-black px-4 py-2 rounded-xl font-semibold text-sm order-btn" data-id="${service.id}">Order</button>
                         </div>
                     </div>
                 `;
                 servicesGrid.appendChild(card);
             });
-
             document.querySelectorAll('.order-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
@@ -460,7 +376,6 @@
                     if (service) openOrderModal(service);
                 });
             });
-
             lucide.createIcons();
         }
 
@@ -468,10 +383,8 @@
             const orderModal = document.getElementById('orderModal');
             document.getElementById('orderServiceName').textContent = service.name;
             const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
-            
             const fieldsHtml = service.fields?.includes('link') ?
                 `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
-
             document.getElementById('orderFormContent').innerHTML = `
                 <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
                 ${fieldsHtml}
@@ -479,7 +392,6 @@
                 `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
                 <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
             `;
-
             document.getElementById('submitOrder').onclick = () => submitOrder(service);
             orderModal.classList.add('active');
             lucide.createIcons();
@@ -507,48 +419,33 @@
 
             try {
                 const userRef = doc(db, "users", currentUser.uid);
-
                 await runTransaction(db, async (transaction) => {
                     const userSnap = await transaction.get(userRef);
                     const currentBalance = userSnap.data().balance || 0;
-
-                    if (currentBalance < totalPrice) {
-                        throw new Error('Insufficient balance');
-                    }
-
+                    if (currentBalance < totalPrice) throw new Error('Insufficient balance');
                     transaction.update(userRef, { balance: currentBalance - totalPrice });
-
                     const orderRef = doc(collection(db, "orders"));
                     transaction.set(orderRef, {
                         userId: currentUser.uid,
                         userEmail: currentUser.email,
                         serviceId: service.id,
                         serviceName: service.name,
-                        link,
-                        quantity: qty,
-                        totalPrice: totalPrice,
-                        status: 'pending',
-                        createdAt: new Date()
+                        link, quantity: qty, totalPrice: totalPrice,
+                        status: 'pending', createdAt: new Date()
                     });
                 });
-
                 userBalanceNGN -= totalPrice;
                 updateBalanceDisplay();
-
                 msgEl.textContent = 'Order placed successfully! ₦' + totalPrice.toLocaleString() + ' deducted.';
                 msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
                 msgEl.classList.remove('hidden');
-
                 setTimeout(() => {
                     document.getElementById('orderModal').classList.remove('active');
                     msgEl.classList.add('hidden');
                 }, 2000);
-
             } catch (err) {
                 console.error("Order error:", err);
-                msgEl.textContent = err.message === 'Insufficient balance'
-                  ? 'Insufficient balance. Please top up.'
-                    : 'Error placing order. Try again.';
+                msgEl.textContent = err.message === 'Insufficient balance' ? 'Insufficient balance. Please top up.' : 'Error placing order. Try again.';
                 msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
                 msgEl.classList.remove('hidden');
             }
@@ -561,23 +458,21 @@
             onSnapshot(q, (snap) => {
                 const active = snap.docs.filter(d => d.data().status === 'active').length;
                 document.getElementById('activeInvest').textContent = active;
-
                 document.getElementById('userInvestments').innerHTML = snap.docs.map(doc => {
                     const d = doc.data();
-                    const startDate = d.timestamp?.toDate? d.timestamp.toDate() : new Date(d.timestamp);
-                    const planDays = d.plan.includes('7days')? 7 : d.plan.includes('14days')? 14 : 30;
+                    const startDate = d.timestamp?.toDate ? d.timestamp.toDate() : new Date(d.timestamp);
+                    const planDays = d.plan.includes('7days') ? 7 : d.plan.includes('14days') ? 14 : 30;
                     const endDate = new Date(startDate.getTime() + planDays * 24 * 60 * 60 * 1000);
                     const timeLeft = getTimeRemaining(endDate);
-
                     return `
                         <div class="card">
                             <div class="flex justify-between mb-2">
                                 <p class="font-bold">${d.plan}</p>
-                                <span class="text-xs px-2 py-1 rounded ${d.status === 'active'? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
+                                <span class="text-xs px-2 py-1 rounded ${d.status === 'active' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
                             </div>
                             <p>Amount: ₦${d.amount.toLocaleString()}</p>
                             <p>Profit: ₦${d.profit.toLocaleString()}</p>
-                            <p class="text-sm text-gray-400">${timeLeft.expired? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
+                            <p class="text-sm text-gray-400">${timeLeft.expired ? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
                         </div>
                     `;
                 }).join('') || '<p class="text-gray-400">No investments yet</p>';
@@ -585,6 +480,7 @@
         }
 
         async function loadTransactions() {
+            // Orders use userId field, withdrawals use uid field
             const ordersQuery = query(collection(db, "orders"), where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"));
             const ordersSnap = await getDocs(ordersQuery);
             document.getElementById('totalOrders').textContent = ordersSnap.size;
@@ -601,12 +497,12 @@
                 <div class="card">
                     <div class="flex justify-between">
                         <div>
-                            <p class="font-bold">${tx.type === 'order'? tx.serviceName : 'Withdrawal Request'}</p>
-                            <p class="text-sm text-gray-400">${tx.type === 'order'? 'Service Order' : 'Investment Withdrawal'}</p>
+                            <p class="font-bold">${tx.type === 'order' ? tx.serviceName : 'Withdrawal Request'}</p>
+                            <p class="text-sm text-gray-400">${tx.type === 'order' ? 'Service Order' : 'Investment Withdrawal'}</p>
                         </div>
                         <div class="text-right">
                             <p class="font-bold">₦${(tx.totalPrice || tx.amount || 0).toLocaleString()}</p>
-                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved'? 'text-green-400' : tx.status === 'pending'? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
+                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved' ? 'text-green-400' : tx.status === 'pending' ? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
                         </div>
                     </div>
                 </div>
@@ -622,7 +518,7 @@
                     <div class="card">
                         <p class="font-bold">${data.referredEmail}</p>
                         <p class="text-sm text-gray-400">Bonus: ₦${data.bonus}</p>
-                        <p class="text-xs ${data.status === 'paid'? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
+                        <p class="text-xs ${data.status === 'paid' ? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
                     </div>
                 `;
             }).join('') || '<p class="text-gray-400">No referrals yet</p>';
@@ -643,7 +539,7 @@
             const q = query(collection(db, "investments"), where("uid", "==", currentUser.uid), where("status", "==", "active"));
             const snap = await getDocs(q);
             const select = document.getElementById('withdrawSelect');
-            select.innerHTML = snap.empty? '<option>No active investments</option>' :
+            select.innerHTML = snap.empty ? '<option>No active investments</option>' :
                 snap.docs.map(d => `<option value="${d.id}">₦${d.data().amount} - ${d.data().plan}</option>`).join('');
             document.getElementById('withdrawModal').classList.add('active');
         };
@@ -654,7 +550,7 @@
             const accountName = document.getElementById('accountName').value.trim();
             const accountNumber = document.getElementById('accountNumber').value.trim();
 
-            if (!invId ||!bankName ||!accountName ||!accountNumber) {
+            if (!invId || !bankName || !accountName || !accountNumber) {
                 alert('Fill all bank details');
                 return;
             }
@@ -690,8 +586,13 @@
             const profit = amount * profitRates[plan];
 
             await addDoc(collection(db, "investments"), {
-                uid: currentUser.uid, email: currentUser.email, plan, amount, profit,
-                status: 'active', timestamp: new Date()
+                uid: currentUser.uid, 
+                email: currentUser.email, 
+                plan, 
+                amount, 
+                profit,
+                status: 'active', 
+                timestamp: new Date()
             });
 
             await updateDoc(doc(db, "users", currentUser.uid), { balance: userBalanceNGN - amount });
@@ -722,10 +623,14 @@
 
         async function sendChatMessage() {
             const text = document.getElementById('chatInput').value.trim();
-            if (!text ||!currentUser) return;
+            if (!text || !currentUser) return;
             await addDoc(collection(db, "chat_messages"), {
-                uid: currentUser.uid, email: currentUser.email, message: text,
-                sender: 'user', timestamp: new Date(), read: false
+                uid: currentUser.uid, 
+                email: currentUser.email, 
+                message: text,
+                sender: 'user', 
+                timestamp: new Date(), 
+                read: false
             });
             document.getElementById('chatInput').value = '';
         }
@@ -739,16 +644,16 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const isUser = data.sender === 'user';
-                    if (!isUser &&!data.read) hasUnread = true;
+                    if (!isUser && !data.read) hasUnread = true;
                     chatMessages.innerHTML += `
-                        <div class="${isUser? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-xl">
+                        <div class="${isUser ? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-xl">
                             <p class="text-sm">${data.message}</p>
                             <p class="text-xs text-gray-500 mt-1">${data.sender}</p>
                         </div>
                     `;
                 });
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-                document.getElementById('chatBadge').classList.toggle('hidden',!hasUnread);
+                document.getElementById('chatBadge').classList.toggle('hidden', !hasUnread);
             });
         }
 
@@ -774,7 +679,7 @@
         document.getElementById('chatOpenBtn').onclick = () => {
             document.getElementById('chatWidget').classList.remove('hidden');
             document.getElementById('chatWidget').classList.add('flex');
-            if (currentUser &&!chatUnsubscribe) loadChatMessages();
+            if (currentUser && !chatUnsubscribe) loadChatMessages();
         };
         document.getElementById('chatCloseBtn').onclick = () => {
             document.getElementById('chatWidget').classList.add('hidden');
@@ -810,8 +715,12 @@
             if (!amount || amount <= 0) return alert('Enter valid amount');
 
             await addDoc(collection(db, "topup_requests"), {
-                uid: currentUser.uid, email: currentUser.email, amount: parseFloat(amount),
-                note: note, status: 'pending', createdAt: new Date()
+                uid: currentUser.uid, 
+                email: currentUser.email, 
+                amount: parseFloat(amount),
+                note: note, 
+                status: 'pending', 
+                createdAt: new Date()
             });
 
             alert('Request sent! You’ll be credited after payment confirmation.');
