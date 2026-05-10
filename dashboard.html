@@ -507,7 +507,7 @@
 
             try {
                 const userRef = doc(db, "users", currentUser.uid);
-                
+
                 await runTransaction(db, async (transaction) => {
                     const userSnap = await transaction.get(userRef);
                     const currentBalance = userSnap.data().balance || 0;
@@ -524,7 +524,7 @@
                         userEmail: currentUser.email,
                         serviceId: service.id,
                         serviceName: service.name,
-                        link, 
+                        link,
                         quantity: qty,
                         totalPrice: totalPrice,
                         status: 'pending',
@@ -538,7 +538,7 @@
                 msgEl.textContent = 'Order placed successfully! ₦' + totalPrice.toLocaleString() + ' deducted.';
                 msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
                 msgEl.classList.remove('hidden');
-                
+
                 setTimeout(() => {
                     document.getElementById('orderModal').classList.remove('active');
                     msgEl.classList.add('hidden');
@@ -547,7 +547,7 @@
             } catch (err) {
                 console.error("Order error:", err);
                 msgEl.textContent = err.message === 'Insufficient balance'
-                   ? 'Insufficient balance. Please top up.'
+                  ? 'Insufficient balance. Please top up.'
                     : 'Error placing order. Try again.';
                 msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
                 msgEl.classList.remove('hidden');
@@ -593,8 +593,8 @@
             const withdrawSnap = await getDocs(withdrawQuery);
 
             const allTx = [
-             ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
-             ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
+               ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
+               ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
             ].sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
 
             document.getElementById('transactionsList').innerHTML = allTx.slice(0, 20).map(tx => `
