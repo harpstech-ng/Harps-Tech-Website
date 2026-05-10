@@ -324,7 +324,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -487,27 +487,70 @@
 
         async function submitOrder(service) {
             const link = document.getElementById('orderLink')?.value || '';
-            const qty = document.getElementById('orderQty')?.value || 1;
+            const qty = parseInt(document.getElementById('orderQty')?.value || 1);
+            const totalPrice = (service.pricePerUnit || 0) * qty;
+            const msgEl = document.getElementById('orderMsg');
+
+            if (qty < (service.min || 1) || qty > (service.max || 999)) {
+                msgEl.textContent = `Quantity must be between ${service.min} and ${service.max}`;
+                msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                msgEl.classList.remove('hidden');
+                return;
+            }
+
+            if (totalPrice > userBalanceNGN) {
+                msgEl.textContent = 'Insufficient balance. Please top up.';
+                msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                msgEl.classList.remove('hidden');
+                return;
+            }
 
             try {
-                await addDoc(collection(db, "orders"), {
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    serviceId: service.id,
-                    serviceName: service.name,
-                    link, 
-                    quantity: parseInt(qty),
-                    totalPrice: (service.pricePerUnit || 0) * parseInt(qty),
-                    status: 'pending',
-                    createdAt: new Date()
+                const userRef = doc(db, "users", currentUser.uid);
+                
+                await runTransaction(db, async (transaction) => {
+                    const userSnap = await transaction.get(userRef);
+                    const currentBalance = userSnap.data().balance || 0;
+
+                    if (currentBalance < totalPrice) {
+                        throw new Error('Insufficient balance');
+                    }
+
+                    transaction.update(userRef, { balance: currentBalance - totalPrice });
+
+                    const orderRef = doc(collection(db, "orders"));
+                    transaction.set(orderRef, {
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        serviceId: service.id,
+                        serviceName: service.name,
+                        link, 
+                        quantity: qty,
+                        totalPrice: totalPrice,
+                        status: 'pending',
+                        createdAt: new Date()
+                    });
                 });
 
-                document.getElementById('orderMsg').textContent = 'Order placed! Check chat for updates.';
-                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
-                setTimeout(() => document.getElementById('orderModal').classList.remove('active'), 2000);
+                userBalanceNGN -= totalPrice;
+                updateBalanceDisplay();
+
+                msgEl.textContent = 'Order placed successfully! ₦' + totalPrice.toLocaleString() + ' deducted.';
+                msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+                msgEl.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById('orderModal').classList.remove('active');
+                    msgEl.classList.add('hidden');
+                }, 2000);
+
             } catch (err) {
-                document.getElementById('orderMsg').textContent = 'Error placing order.';
-                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                console.error("Order error:", err);
+                msgEl.textContent = err.message === 'Insufficient balance'
+                   ? 'Insufficient balance. Please top up.'
+                    : 'Error placing order. Try again.';
+                msgEl.className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                msgEl.classList.remove('hidden');
             }
         }
 
@@ -521,8 +564,8 @@
 
                 document.getElementById('userInvestments').innerHTML = snap.docs.map(doc => {
                     const d = doc.data();
-                    const startDate = d.timestamp?.toDate ? d.timestamp.toDate() : new Date(d.timestamp);
-                    const planDays = d.plan.includes('7days') ? 7 : d.plan.includes('14days') ? 14 : 30;
+                    const startDate = d.timestamp?.toDate? d.timestamp.toDate() : new Date(d.timestamp);
+                    const planDays = d.plan.includes('7days')? 7 : d.plan.includes('14days')? 14 : 30;
                     const endDate = new Date(startDate.getTime() + planDays * 24 * 60 * 60 * 1000);
                     const timeLeft = getTimeRemaining(endDate);
 
@@ -530,11 +573,11 @@
                         <div class="card">
                             <div class="flex justify-between mb-2">
                                 <p class="font-bold">${d.plan}</p>
-                                <span class="text-xs px-2 py-1 rounded ${d. status === 'active' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
+                                <span class="text-xs px-2 py-1 rounded ${d.status === 'active'? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
                             </div>
                             <p>Amount: ₦${d.amount.toLocaleString()}</p>
                             <p>Profit: ₦${d.profit.toLocaleString()}</p>
-                            <p class="text-sm text-gray-400">${timeLeft.expired ? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
+                            <p class="text-sm text-gray-400">${timeLeft.expired? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
                         </div>
                     `;
                 }).join('') || '<p class="text-gray-400">No investments yet</p>';
@@ -550,20 +593,20 @@
             const withdrawSnap = await getDocs(withdrawQuery);
 
             const allTx = [
-              ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
-              ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
+             ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
+             ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
             ].sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
 
             document.getElementById('transactionsList').innerHTML = allTx.slice(0, 20).map(tx => `
                 <div class="card">
                     <div class="flex justify-between">
                         <div>
-                            <p class="font-bold">${tx.type === 'order' ? tx.serviceName : 'Withdrawal Request'}</p>
-                            <p class="text-sm text-gray-400">${tx.type === 'order' ? 'Service Order' : 'Investment Withdrawal'}</p>
+                            <p class="font-bold">${tx.type === 'order'? tx.serviceName : 'Withdrawal Request'}</p>
+                            <p class="text-sm text-gray-400">${tx.type === 'order'? 'Service Order' : 'Investment Withdrawal'}</p>
                         </div>
                         <div class="text-right">
                             <p class="font-bold">₦${(tx.totalPrice || tx.amount || 0).toLocaleString()}</p>
-                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved' ? 'text-green-400' : tx.status === 'pending' ? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
+                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved'? 'text-green-400' : tx.status === 'pending'? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
                         </div>
                     </div>
                 </div>
@@ -579,7 +622,7 @@
                     <div class="card">
                         <p class="font-bold">${data.referredEmail}</p>
                         <p class="text-sm text-gray-400">Bonus: ₦${data.bonus}</p>
-                        <p class="text-xs ${data.status === 'paid' ? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
+                        <p class="text-xs ${data.status === 'paid'? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
                     </div>
                 `;
             }).join('') || '<p class="text-gray-400">No referrals yet</p>';
@@ -600,7 +643,7 @@
             const q = query(collection(db, "investments"), where("uid", "==", currentUser.uid), where("status", "==", "active"));
             const snap = await getDocs(q);
             const select = document.getElementById('withdrawSelect');
-            select.innerHTML = snap.empty ? '<option>No active investments</option>' :
+            select.innerHTML = snap.empty? '<option>No active investments</option>' :
                 snap.docs.map(d => `<option value="${d.id}">₦${d.data().amount} - ${d.data().plan}</option>`).join('');
             document.getElementById('withdrawModal').classList.add('active');
         };
@@ -611,7 +654,7 @@
             const accountName = document.getElementById('accountName').value.trim();
             const accountNumber = document.getElementById('accountNumber').value.trim();
 
-            if (!invId || !bankName || !accountName || !accountNumber) {
+            if (!invId ||!bankName ||!accountName ||!accountNumber) {
                 alert('Fill all bank details');
                 return;
             }
@@ -679,7 +722,7 @@
 
         async function sendChatMessage() {
             const text = document.getElementById('chatInput').value.trim();
-            if (!text || !currentUser) return;
+            if (!text ||!currentUser) return;
             await addDoc(collection(db, "chat_messages"), {
                 uid: currentUser.uid, email: currentUser.email, message: text,
                 sender: 'user', timestamp: new Date(), read: false
@@ -696,16 +739,16 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const isUser = data.sender === 'user';
-                    if (!isUser && !data.read) hasUnread = true;
+                    if (!isUser &&!data.read) hasUnread = true;
                     chatMessages.innerHTML += `
-                        <div class="${isUser ? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-xl">
+                        <div class="${isUser? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-xl">
                             <p class="text-sm">${data.message}</p>
                             <p class="text-xs text-gray-500 mt-1">${data.sender}</p>
                         </div>
                     `;
                 });
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-                document.getElementById('chatBadge').classList.toggle('hidden', !hasUnread);
+                document.getElementById('chatBadge').classList.toggle('hidden',!hasUnread);
             });
         }
 
@@ -731,7 +774,7 @@
         document.getElementById('chatOpenBtn').onclick = () => {
             document.getElementById('chatWidget').classList.remove('hidden');
             document.getElementById('chatWidget').classList.add('flex');
-            if (currentUser && !chatUnsubscribe) loadChatMessages();
+            if (currentUser &&!chatUnsubscribe) loadChatMessages();
         };
         document.getElementById('chatCloseBtn').onclick = () => {
             document.getElementById('chatWidget').classList.add('hidden');
