@@ -16,24 +16,24 @@
             --accent-2: #0072FF;
         }
         body { background-color: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; }
-       .glass-nav { background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
-       .service-card { background: var(--card); border: 1px solid var(--border); transition: all 0.35s cubic-bezier(.4,0,.2,1); }
-       .service-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0, 232, 255, 0.15); }
-       .btn-premium { background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: all 0.25s; }
-       .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 232, 255, 0.35); }
-       .modal { display: none; }
-       .modal.active { display: flex; }
-       .balance-card { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
-       .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
-       .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: 0.3s; }
-       .stat-card:hover { border-color: var(--accent); }
-       .sidebar { transition: 0.3s; }
+        .glass-nav { background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
+        .service-card { background: var(--card); border: 1px solid var(--border); transition: all 0.35s cubic-bezier(.4,0,.2,1); }
+        .service-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0, 232, 255, 0.15); }
+        .btn-premium { background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: all 0.25s; }
+        .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 232, 255, 0.35); }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .balance-card { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: 0.3s; }
+        .stat-card:hover { border-color: var(--accent); }
+        .sidebar { transition: 0.3s; }
         @media (max-width: 1024px) {
-           .sidebar { transform: translateX(-100%); position: fixed; }
-           .sidebar.active { transform: translateX(0); }
+          .sidebar { transform: translateX(-100%); position: fixed; }
+          .sidebar.active { transform: translateX(0); }
         }
-       .tab-content { display: none; }
-       .tab-content.active { display: block; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
@@ -118,6 +118,7 @@
                 </h1>
             </div>
 
+            <!-- Overview Tab -->
             <div id="tab-overview" class="tab-content active">
                 <div class="grid md:grid-cols-4 gap-4 mb-8">
                     <div class="stat-card">
@@ -164,29 +165,52 @@
                 </div>
             </div>
 
+            <!-- Services Tab -->
             <div id="tab-services" class="tab-content">
                 <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Marketplace</h2>
                 <p class="text-gray-500 mb-6" id="servicesCount">Loading services...</p>
                 <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </div>
 
+            <!-- Investments Tab -->
             <div id="tab-investments" class="tab-content">
                 <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">My Investments</h2>
                 <div id="userInvestments" class="space-y-4"></div>
             </div>
 
+            <!-- Referrals Tab -->
             <div id="tab-referrals" class="tab-content">
                 <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Referral History</h2>
                 <div id="referralHistory" class="space-y-4"></div>
             </div>
 
+            <!-- Transactions Tab -->
             <div id="tab-transactions" class="tab-content">
                 <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Transaction History</h2>
                 <div id="transactionsList" class="space-y-4"></div>
             </div>
+
+            <!-- Support Tab -->
+            <div id="tab-support" class="tab-content">
+                <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Support</h2>
+                <div class="card max-w-2xl">
+                    <p class="text-gray-400 mb-6">Use the chat icon bottom right for instant support. I reply directly from the admin panel.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="mailto:okugbepraise@gmail.com" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition flex-1">
+                            <i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i>
+                            <span>okugbepraise@gmail.com</span>
+                        </a>
+                        <a href="https://wa.me/2348141612736" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition flex-1">
+                            <i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
+    <!-- Chat Widget -->
     <div id="chatWidget" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] bg-[#0a0a0a] border-white/10 rounded-3xl shadow-2xl shadow-cyan-500/20 hidden flex-col overflow-hidden z-50">
         <div class="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 flex justify-between items-center">
             <div>
@@ -208,6 +232,19 @@
         </div>
     </div>
 
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
+                <button id="closeOrderModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div id="orderFormContent"></div>
+            <div id="orderMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
     <div id="settingsModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -226,6 +263,7 @@
         </div>
     </div>
 
+    <!-- Invest Modal -->
     <div id="investModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -243,29 +281,28 @@
         </div>
     </div>
 
+    <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8 max-h- overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Withdraw Investment</h3>
                 <button id="closeWithdrawModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-
             <select id="withdrawSelect" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
                 <option>Loading...</option>
             </select>
-
             <div class="space-y-3">
                 <p class="text-sm text-gray-400">Enter bank details for payment</p>
                 <input type="text" id="bankName" placeholder="Bank Name" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
                 <input type="text" id="accountName" placeholder="Account Name" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
                 <input type="text" id="accountNumber" placeholder="Account Number" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
             </div>
-
             <button id="submitWithdraw" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl mt-4">Request Withdrawal</button>
             <div id="withdrawMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
+    <!-- Topup Modal -->
     <div id="topupModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
         <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
@@ -280,6 +317,7 @@
             <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
             <textarea id="topupNote" placeholder="Payment reference" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
+            <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
@@ -309,6 +347,7 @@
         let selectedCurrency = localStorage.getItem('currency') || 'NGN';
         let userData = {};
         let chatUnsubscribe = null;
+        let allServices = [];
 
         const currencySelect = document.getElementById('currencySelect');
         currencySelect.value = selectedCurrency;
@@ -317,7 +356,7 @@
             const rate = rates[currency] || 1;
             const converted = amount * rate;
             const symbol = currencySymbols[currency] || currency;
-            const decimals = ['BTC', 'ETH'].includes(currency)? 8 : 2;
+            const decimals = ['BTC', 'ETH'].includes(currency) ? 8 : 2;
             return `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})}`;
         }
 
@@ -356,6 +395,124 @@
             updateBalanceDisplay();
         }
 
+        async function loadServices() {
+            try {
+                const [snap1, snap2] = await Promise.all([
+                    getDoc(doc(db, 'config', 'services_part1')),
+                    getDoc(doc(db, 'config', 'services_part2'))
+                ]);
+
+                allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
+                
+                if (allServices.length === 0) {
+                    document.getElementById('servicesCount').textContent = "No services found. Upload services in admin panel.";
+                    document.getElementById('servicesGrid').innerHTML = '';
+                    return;
+                }
+
+                document.getElementById('servicesCount').textContent = `${allServices.length} premium services available`;
+                renderServices(allServices);
+            } catch (err) {
+                console.error("Error loading services:", err);
+                document.getElementById('servicesCount').textContent = "Error loading services";
+                document.getElementById('servicesGrid').innerHTML = `<p class="text-red-400">Error: ${err.message}</p>`;
+            }
+        }
+
+        function renderServices(services) {
+            const servicesGrid = document.getElementById('servicesGrid');
+            servicesGrid.innerHTML = '';
+            
+            services.forEach(service => {
+                if (service.available === false) return;
+
+                const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+                const priceText = service.pricePerUnit ? `₦${service.pricePerUnit.toLocaleString()}/unit` : 'Custom Quote';
+                const img = service.image || 'https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech';
+
+                const card = document.createElement('div');
+                card.className = 'service-card rounded-2xl overflow-hidden group';
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden bg-black/50">
+                        <img src="${img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="${service.name}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        ${!isAuto ? '<span class="absolute top-4 right-4 text-xs bg-yellow-500/90 text-black px-3 py-1 rounded-full font-bold">Manual</span>' : ''}
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-lg leading-tight mb-1">${service.name}</h3>
+                        <p class="text-gray-400 text-sm mb-2">${service.category}</p>
+                        ${service.min ? `<p class="text-gray-400 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
+                        <div class="flex items-center justify-between">
+                            <div class="text-cyan-400 font-bold text-lg">${priceText}</div>
+                            <button class="bg-cyan-500 text-black px-4 py-2 rounded-xl font-semibold text-sm order-btn" data-id="${service.id}">
+                                Order
+                            </button>
+                        </div>
+                    </div>
+                `;
+                servicesGrid.appendChild(card);
+            });
+
+            document.querySelectorAll('.order-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const service = services.find(s => s.id === id);
+                    if (service) openOrderModal(service);
+                });
+            });
+
+            lucide.createIcons();
+        }
+
+        function openOrderModal(service) {
+            const orderModal = document.getElementById('orderModal');
+            document.getElementById('orderServiceName').textContent = service.name;
+            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
+            
+            const fieldsHtml = service.fields?.includes('link') ?
+                `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
+
+            document.getElementById('orderFormContent').innerHTML = `
+                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
+                ${fieldsHtml}
+                ${service.fields?.includes('quantity') ?
+                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
+                <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
+            `;
+
+            document.getElementById('submitOrder').onclick = () => submitOrder(service);
+            orderModal.classList.add('active');
+            lucide.createIcons();
+        }
+
+        async function submitOrder(service) {
+            const link = document.getElementById('orderLink')?.value || '';
+            const qty = document.getElementById('orderQty')?.value || 1;
+
+            try {
+                await addDoc(collection(db, "orders"), {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    serviceId: service.id,
+                    serviceName: service.name,
+                    link, 
+                    quantity: parseInt(qty),
+                    totalPrice: (service.pricePerUnit || 0) * parseInt(qty),
+                    status: 'pending',
+                    createdAt: new Date()
+                });
+
+                document.getElementById('orderMsg').textContent = 'Order placed! Check chat for updates.';
+                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+                setTimeout(() => document.getElementById('orderModal').classList.remove('active'), 2000);
+            } catch (err) {
+                document.getElementById('orderMsg').textContent = 'Error placing order.';
+                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+            }
+        }
+
+        document.getElementById('closeOrderModal').onclick = () => document.getElementById('orderModal').classList.remove('active');
+
         async function loadInvestments() {
             const q = query(collection(db, "investments"), where("uid", "==", currentUser.uid), orderBy("timestamp", "desc"));
             onSnapshot(q, (snap) => {
@@ -364,8 +521,8 @@
 
                 document.getElementById('userInvestments').innerHTML = snap.docs.map(doc => {
                     const d = doc.data();
-                    const startDate = d.timestamp?.toDate? d.timestamp.toDate() : new Date(d.timestamp);
-                    const planDays = d.plan.includes('7days')? 7 : d.plan.includes('14days')? 14 : 30;
+                    const startDate = d.timestamp?.toDate ? d.timestamp.toDate() : new Date(d.timestamp);
+                    const planDays = d.plan.includes('7days') ? 7 : d.plan.includes('14days') ? 14 : 30;
                     const endDate = new Date(startDate.getTime() + planDays * 24 * 60 * 60 * 1000);
                     const timeLeft = getTimeRemaining(endDate);
 
@@ -373,11 +530,11 @@
                         <div class="card">
                             <div class="flex justify-between mb-2">
                                 <p class="font-bold">${d.plan}</p>
-                                <span class="text-xs px-2 py-1 rounded ${d.status === 'active'? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
+                                <span class="text-xs px-2 py-1 rounded ${d. status === 'active' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
                             </div>
                             <p>Amount: ₦${d.amount.toLocaleString()}</p>
                             <p>Profit: ₦${d.profit.toLocaleString()}</p>
-                            <p class="text-sm text-gray-400">${timeLeft.expired? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
+                            <p class="text-sm text-gray-400">${timeLeft.expired ? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
                         </div>
                     `;
                 }).join('') || '<p class="text-gray-400">No investments yet</p>';
@@ -393,20 +550,20 @@
             const withdrawSnap = await getDocs(withdrawQuery);
 
             const allTx = [
-               ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
-               ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
+              ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
+              ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
             ].sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
 
             document.getElementById('transactionsList').innerHTML = allTx.slice(0, 20).map(tx => `
                 <div class="card">
                     <div class="flex justify-between">
                         <div>
-                            <p class="font-bold">${tx.type === 'order'? tx.serviceName : 'Withdrawal Request'}</p>
-                            <p class="text-sm text-gray-400">${tx.type === 'order'? 'Service Order' : 'Investment Withdrawal'}</p>
+                            <p class="font-bold">${tx.type === 'order' ? tx.serviceName : 'Withdrawal Request'}</p>
+                            <p class="text-sm text-gray-400">${tx.type === 'order' ? 'Service Order' : 'Investment Withdrawal'}</p>
                         </div>
                         <div class="text-right">
                             <p class="font-bold">₦${(tx.totalPrice || tx.amount || 0).toLocaleString()}</p>
-                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved'? 'text-green-400' : tx.status === 'pending'? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
+                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved' ? 'text-green-400' : tx.status === 'pending' ? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
                         </div>
                     </div>
                 </div>
@@ -422,7 +579,7 @@
                     <div class="card">
                         <p class="font-bold">${data.referredEmail}</p>
                         <p class="text-sm text-gray-400">Bonus: ₦${data.bonus}</p>
-                        <p class="text-xs ${data.status === 'paid'? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
+                        <p class="text-xs ${data.status === 'paid' ? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
                     </div>
                 `;
             }).join('') || '<p class="text-gray-400">No referrals yet</p>';
@@ -443,7 +600,7 @@
             const q = query(collection(db, "investments"), where("uid", "==", currentUser.uid), where("status", "==", "active"));
             const snap = await getDocs(q);
             const select = document.getElementById('withdrawSelect');
-            select.innerHTML = snap.empty? '<option>No active investments</option>' :
+            select.innerHTML = snap.empty ? '<option>No active investments</option>' :
                 snap.docs.map(d => `<option value="${d.id}">₦${d.data().amount} - ${d.data().plan}</option>`).join('');
             document.getElementById('withdrawModal').classList.add('active');
         };
@@ -454,7 +611,7 @@
             const accountName = document.getElementById('accountName').value.trim();
             const accountNumber = document.getElementById('accountNumber').value.trim();
 
-            if (!invId ||!bankName ||!accountName ||!accountNumber) {
+            if (!invId || !bankName || !accountName || !accountNumber) {
                 alert('Fill all bank details');
                 return;
             }
@@ -511,6 +668,8 @@
                 msgEl.textContent = 'Password updated successfully!';
                 msgEl.className = 'mb-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
                 msgEl.classList.remove('hidden');
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
             } catch (err) {
                 msgEl.textContent = 'Error: ' + err.message;
                 msgEl.className = 'mb-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
@@ -520,7 +679,7 @@
 
         async function sendChatMessage() {
             const text = document.getElementById('chatInput').value.trim();
-            if (!text ||!currentUser) return;
+            if (!text || !currentUser) return;
             await addDoc(collection(db, "chat_messages"), {
                 uid: currentUser.uid, email: currentUser.email, message: text,
                 sender: 'user', timestamp: new Date(), read: false
@@ -537,9 +696,26 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const isUser = data.sender === 'user';
-                    if (!isUser &&!data.read) hasUnread = true;
+                    if (!isUser && !data.read) hasUnread = true;
                     chatMessages.innerHTML += `
-                        <div class="${isUser? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12 document.getElementById('chatSendBtn').onclick = sendChatMessage;
+                        <div class="${isUser ? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-xl">
+                            <p class="text-sm">${data.message}</p>
+                            <p class="text-xs text-gray-500 mt-1">${data.sender}</p>
+                        </div>
+                    `;
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                document.getElementById('chatBadge').classList.toggle('hidden', !hasUnread);
+            });
+        }
+
+        document.getElementById('copyRefBtn').onclick = () => {
+            const link = document.getElementById('referralLink').textContent;
+            navigator.clipboard.writeText(link);
+            alert('Referral link copied!');
+        };
+
+        document.getElementById('chatSendBtn').onclick = sendChatMessage;
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendChatMessage();
         });
@@ -555,7 +731,7 @@
         document.getElementById('chatOpenBtn').onclick = () => {
             document.getElementById('chatWidget').classList.remove('hidden');
             document.getElementById('chatWidget').classList.add('flex');
-            if (currentUser &&!chatUnsubscribe) loadChatMessages();
+            if (currentUser && !chatUnsubscribe) loadChatMessages();
         };
         document.getElementById('chatCloseBtn').onclick = () => {
             document.getElementById('chatWidget').classList.add('hidden');
@@ -609,11 +785,11 @@
                 currentUser = user;
                 document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
                 await loadUserData(user);
+                loadServices();
                 loadInvestments();
                 loadTransactions();
                 loadReferrals();
                 loadChatMessages();
-                // loadServices() - call your existing service loader here
             } else {
                 window.location.href = "login.html";
             }
