@@ -5,179 +5,199 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Harps Tech | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #050505; color: #fff; font-family: 'Outfit', sans-serif; }
-      .glass-nav { background: rgba(8, 8, 8, 0.7); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255,255,255,0.06); }
-      .hero-gradient { background: radial-gradient(circle at 20% 30%, rgba(0, 232, 255, 0.12) 0%, transparent 50%); }
-      .service-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.35s cubic-bezier(.4,0,.2,1); }
-      .service-card:hover { border-color: #00E8FF; transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0, 232, 255, 0.15); }
-      .btn-premium { background: linear-gradient(90deg, #00E8FF, #0072FF); transition: all 0.25s; }
-      .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 232, 255, 0.35); }
-      .modal { display: none; }
-      .modal.active { display: flex; }
-      .balance-card { background: linear-gradient(135deg, #00E8FF, #0072FF); }
-      .chat-bubble { animation: slideUp 0.3s ease; }
-      .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,0.08); border-radius: 20px; padding: 24px; }
-      @keyframes slideUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        :root {
+            --bg: #050505;
+            --card: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.08);
+            --accent: #00E8FF;
+            --accent-2: #0072FF;
+        }
+        body { background-color: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; }
+       .glass-nav { background: rgba(8, 8, 8, 0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
+       .service-card { background: var(--card); border: 1px solid var(--border); transition: all 0.35s cubic-bezier(.4,0,.2,1); }
+       .service-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0, 232, 255, 0.15); }
+       .btn-premium { background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: all 0.25s; }
+       .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 232, 255, 0.35); }
+       .modal { display: none; }
+       .modal.active { display: flex; }
+       .balance-card { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+       .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+       .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: 0.3s; }
+       .stat-card:hover { border-color: var(--accent); }
+       .sidebar { transition: 0.3s; }
+        @media (max-width: 1024px) {
+           .sidebar { transform: translateX(-100%); position: fixed; }
+           .sidebar.active { transform: translateX(0); }
+        }
+       .tab-content { display: none; }
+       .tab-content.active { display: block; }
     </style>
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-nav py-4">
-        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center font-bold text-black text-lg">H</div>
-                <span class="text-2xl font-extrabold tracking-tighter uppercase">HARPS <span class="text-cyan-400">TECH</span></span>
-            </div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
 
-            <div class="hidden lg:flex gap-10 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                <a href="#dashboard" class="hover:text-cyan-400 transition">Dashboard</a>
-                <a href="#services" class="hover:text-cyan-400 transition">Services</a>
-                <a href="about.html" class="hover:text-cyan-400 transition">About</a>
-                <a href="#support" class="hover:text-cyan-400 transition">Support</a>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <select class="bg-black/50 border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
-                    <option value="NGN">₦ NGN</option>
-                    <option value="USD">$ USD</option>
-                    <option value="EUR">€ EUR</option>
-                    <option value="GBP">£ GBP</option>
-                </select>
-                <button id="chatOpenBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i>
-                </button>
-                <button id="settingsBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                </button>
-            </div>
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-[#080808] border-r border-white/5 z-50 p-6 overflow-y-auto">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-11 h-11 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center font-bold text-black text-lg">H</div>
+            <span class="text-xl font-extrabold tracking-tighter uppercase">HARPS <span class="text-cyan-400">TECH</span></span>
         </div>
-    </nav>
+        <nav class="space-y-2">
+            <a href="#" data-tab="overview" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-cyan-400">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Overview
+            </a>
+            <a href="#" data-tab="services" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i> Services
+            </a>
+            <a href="#" data-tab="investments" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
+                <i data-lucide="trending-up" class="w-5 h-5"></i> Investments
+            </a>
+            <a href="#" data-tab="referrals" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
+                <i data-lucide="users" class="w-5 h-5"></i> Referrals
+            </a>
+            <a href="#" data-tab="transactions" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
+                <i data-lucide="receipt" class="w-5 h-5"></i> Transactions
+            </a>
+            <a href="#" data-tab="support" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400">
+                <i data-lucide="headset" class="w-5 h-5"></i> Support
+            </a>
+        </nav>
+        <div class="absolute bottom-6 left-6 right-6">
+            <button id="logoutBtnSidebar" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-600/10 hover:bg-red-600/20 text-red-400">
+                <i data-lucide="log-out" class="w-5 h-5"></i> Logout
+            </button>
+        </div>
+    </aside>
 
-    <!-- Hero -->
-    <section id="dashboard" class="relative min-h-screen flex items-center pt-32 hero-gradient">
-        <div class="max-w-7xl mx-auto px-6 w-full">
-            <div class="mb-12">
-                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
+    <div class="lg:ml-64 min-h-screen">
+        <nav class="sticky top-0 z-40 glass-nav py-4 px-6">
+            <div class="flex justify-between items-center">
+                <button id="menuToggle" class="lg:hidden w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+
+                <div class="flex items-center gap-3">
+                    <select class="bg-black/50 border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:border-cyan-500 outline-none" id="currencySelect">
+                        <option value="NGN">₦ NGN</option>
+                        <option value="USD">$ USD</option>
+                        <option value="EUR">€ EUR</option>
+                        <option value="GBP">£ GBP</option>
+                        <option value="CAD">C$ CAD</option>
+                        <option value="AUD">A$ AUD</option>
+                        <option value="KES">KSh KES</option>
+                        <option value="GHS">₵ GHS</option>
+                        <option value="ZAR">R ZAR</option>
+                        <option value="UGX">USh UGX</option>
+                        <option value="TZS">TSh TZS</option>
+                        <option value="AED">د.إ AED</option>
+                        <option value="SAR">﷼ SAR</option>
+                        <option value="BTC">₿ BTC</option>
+                        <option value="ETH">Ξ ETH</option>
+                    </select>
+                    <button id="chatOpenBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition relative">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        <span id="chatBadge" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden"></span>
+                    </button>
+                    <button id="settingsBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="p-6 lg:p-10">
+            <div class="mb-8">
+                <div class="inline-block px-4 py-1 border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-widest uppercase mb-4">
                     Welcome back, <span id="userName">User</span>
                 </div>
-                <h1 class="text-5xl md:text-7xl font-extrabold leading-none mb-6 uppercase tracking-tighter">
-                    Your <br> <span class="italic font-light text-gray-400 font-['Playfair_Display']">Control Center.</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold leading-none uppercase tracking-tighter">
+                    Your <span class="italic font-light text-gray-400 font-['Playfair_Display']">Control Center</span>
                 </h1>
             </div>
 
-            <!-- Top Action Cards -->
-            <div class="grid md:grid-cols-3 gap-6 mb-10">
-                <div class="card">
-                    <h3 class="text-lg font-bold mb-2">Refer & Earn</h3>
-                    <p class="text-gray-400 text-sm mb-3">Share your link. Get ₦500 when they fund. They get ₦200 bonus.</p>
-                    <div class="bg-black/30 p-3 rounded-xl mb-3">
-                        <p class="text-xs text-gray-500">Your Referral Code</p>
-                        <p id="referralCode" class="font-bold text-cyan-400">Loading...</p>
+            <div id="tab-overview" class="tab-content active">
+                <div class="grid md:grid-cols-4 gap-4 mb-8">
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Balance</p>
+                        <p class="text-2xl font-bold" id="balance">₦0.00</p>
                     </div>
-                    <button id="copyRefBtn" class="w-full bg-white/5 hover:bg-white/10 py-2 rounded-xl text-sm font-semibold">Copy Link</button>
-                    <p class="text-xs text-gray-500 mt-2">Total Earned: ₦<span id="refEarned">0</span></p>
-                </div>
-
-                <div class="card">
-                    <h3 class="text-lg font-bold mb-2">Invest</h3>
-                    <p class="text-gray-400 text-sm mb-3">Invest and earn up to 15% in 7 days.</p>
-                    <button id="investBtn" class="w-full btn-premium text-black font-bold py-2 rounded-xl mb-2">Invest Now</button>
-                    <p class="text-xs text-gray-500">Active Investments: <span id="activeInvest">0</span></p>
-                </div>
-
-                <div class="card">
-                    <h3 class="text-lg font-bold mb-3">Join Our Community</h3>
-                    <div class="space-y-2">
-                        <a href="https://chat.whatsapp.com/CJuEnldG4UuEzuSRaLSMz6?mode=gi_t" target="_blank" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
-                            <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i> WhatsApp Group
-                        </a>
-                        <a href="https://whatsapp.com/channel/0029VbCj5vI7DAWyvVlz4n0T" target="_blank" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
-                            <i data-lucide="radio" class="w-4 h-4 text-cyan-400"></i> WhatsApp Channel
-                        </a>
-                        <a href="https://www.tiktok.com/@harpstechofficialpage" target="_blank" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
-                            <i data-lucide="music" class="w-4 h-4 text-cyan-400"></i> TikTok Page
-                        </a>
-                        <a href="about.html" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-2 rounded-xl text-sm">
-                            <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i> About Harps Tech
-                        </a>
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Referral Earnings</p>
+                        <p class="text-2xl font-bold text-cyan-400" id="refEarned">₦0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Active Investments</p>
+                        <p class="text-2xl font-bold" id="activeInvest">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Total Orders</p>
+                        <p class="text-2xl font-bold" id="totalOrders">0</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Balance Card -->
-            <div class="grid lg:grid-cols-3 gap-6 mb-16">
-                <div class="lg:col-span-2 balance-card rounded-3xl p-8 md:p-12 shadow-2xl shadow-cyan-500/20">
-                    <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
-                    <h2 class="text-5xl md:text-6xl font-extrabold text-black" id="balance">₦0.00</h2>
-                    <p class="text-black/60 text-sm mt-4">Balance is in NGN. Top-ups are processed manually after payment confirmation.</p>
+                <div class="grid lg:grid-cols-3 gap-6 mb-10">
+                    <div class="card">
+                        <h3 class="text-lg font-bold mb-2">Refer & Earn</h3>
+                        <p class="text-gray-400 text-sm mb-3">Get ₦500 when they fund. They get ₦200 bonus.</p>
+                        <div class="bg-black/30 p-3 rounded-xl mb-3">
+                            <p class="text-xs text-gray-500">Your Referral Link</p>
+                            <p id="referralLink" class="font-mono text-xs text-cyan-400 break-all">Loading...</p>
+                        </div>
+                        <button id="copyRefBtn" class="w-full bg-white/5 hover:bg-white/10 py-2 rounded-xl text-sm font-semibold">Copy Link</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="text-lg font-bold mb-2">Quick Invest</h3>
+                        <p class="text-gray-400 text-sm mb-3">Earn up to 40% in 30 days.</p>
+                        <button id="investBtn" class="w-full btn-premium text-black font-bold py-2 rounded-xl mb-2">Start Investment</button>
+                        <button id="withdrawInvBtn" class="w-full bg-red-600/20 hover:bg-red-600/30 text-red-400 font-bold py-2 rounded-xl">Withdraw Investment</button>
+                    </div>
+
+                    <div class="balance-card rounded-3xl p-6">
+                        <p class="text-black/70 text-xs font-bold uppercase tracking-widest mb-2">Account Balance</p>
+                        <h2 class="text-4xl font-extrabold text-black" id="balanceMain">₦0.00</h2>
+                        <button id="requestTopupBtn" class="mt-4 w-full bg-black/20 hover:bg-black/30 text-black font-bold py-2 rounded-xl">Top Up</button>
+                    </div>
                 </div>
-
-                <div class="space-y-4">
-                    <button onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})" class="w-full btn-premium text-black font-bold py-4 rounded-2xl">
-                        Browse Services
-                    </button>
-                    <button onclick="document.getElementById('support').scrollIntoView({behavior:'smooth'})" class="w-full border-white/20 hover:bg-white/5 text-white font-bold py-4 rounded-2xl transition">
-                        Contact Support
-                    </button>
-                    <button id="requestTopupBtn" class="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-2xl transition">
-                        Request Top Up
-                    </button>
-                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Services -->
-    <section id="services" class="py-24 px-6 bg-[#080808]">
-        <div class="max-w-7xl mx-auto">
-            <div class="mb-16">
-                <h2 class="text-4xl font-bold uppercase tracking-tighter">The <span class="text-cyan-400">Marketplace</span></h2>
-                <p class="text-gray-500 mt-2" id="servicesCount">Loading services...</p>
+            <div id="tab-services" class="tab-content">
+                <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Marketplace</h2>
+                <p class="text-gray-500 mb-6" id="servicesCount">Loading services...</p>
+                <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </div>
-            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            </div>
-        </div>
-    </section>
 
-    <!-- Support -->
-    <section id="support" class="py-24 px-6 bg-black">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-5xl font-bold mb-6 uppercase tracking-tighter">Need <span class="text-cyan-400">Help?</span></h2>
-            <p class="text-gray-400 mb-10">Use the chat icon bottom right for instant support. I reply directly from the admin panel.</p>
-            <div class="flex justify-center gap-6">
-                <a href="mailto:okugbepraise@gmail.com" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition">
-                    <i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i>
-                    <span>okugbepraise@gmail.com</span>
-                </a>
-                <a href="https://wa.me/2348141612736" target="_blank" class="flex items-center gap-3 px-6 py-4 bg-white/5 rounded-2xl hover:bg-white/10 transition">
-                    <i data-lucide="message-circle" class="w-5 h-5 text-cyan-400"></i>
-                    <span>WhatsApp</span>
-                </a>
+            <div id="tab-investments" class="tab-content">
+                <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">My Investments</h2>
+                <div id="userInvestments" class="space-y-4"></div>
             </div>
-        </div>
-    </section>
 
-    <!-- Chat Widget -->
+            <div id="tab-referrals" class="tab-content">
+                <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Referral History</h2>
+                <div id="referralHistory" class="space-y-4"></div>
+            </div>
+
+            <div id="tab-transactions" class="tab-content">
+                <h2 class="text-3xl font-bold uppercase tracking-tighter mb-6">Transaction History</h2>
+                <div id="transactionsList" class="space-y-4"></div>
+            </div>
+        </main>
+    </div>
+
     <div id="chatWidget" class="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] bg-[#0a0a0a] border-white/10 rounded-3xl shadow-2xl shadow-cyan-500/20 hidden flex-col overflow-hidden z-50">
         <div class="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 flex justify-between items-center">
             <div>
                 <h3 class="font-bold text-black">Live Support</h3>
-                <p class="text-xs text-black/70">We usually reply within 2 hours</p>
+                <p class="text-xs text-black/70">Admin replies show here instantly</p>
             </div>
             <button id="chatCloseBtn" class="text-black/80 hover:text-black">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
-        <div id="chatMessages" class="h-80 overflow-y-auto p-4 space-y-3">
-            <div class="chat-bubble bg-white/5 p-3 rounded-2xl text-sm">
-                <p class="text-cyan-400 font-semibold mb-1">Harps Tech Support</p>
-                <p>Hello! How can I help you today?</p>
-            </div>
-        </div>
+        <div id="chatMessages" class="h-80 overflow-y-auto p-4 space-y-3"></div>
         <div class="p-4 border-t border-white/10">
             <div class="flex gap-2">
                 <input id="chatInput" type="text" placeholder="Type your message..." class="flex-1 bg-white/5 border-white/10 rounded-xl px-4 py-2 text-sm focus:border-cyan-500 outline-none">
@@ -185,18 +205,6 @@
                     <i data-lucide="send" class="w-4 h-4"></i>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div id="orderModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold" id="orderServiceName">Order Service</h3>
-                <button id="closeOrderModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div id="orderFormContent"></div>
-            <div id="orderMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
@@ -210,13 +218,51 @@
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-widest mb-2 block">Change Password</label>
                     <div id="pwMsg" class="hidden mb-3 p-3 rounded-xl text-sm"></div>
+                    <input type="password" id="currentPassword" placeholder="Current password" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
                     <input type="password" id="newPassword" placeholder="New password" minlength="6" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
                     <button id="changePwBtn" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Update Password</button>
                 </div>
-                <div class="border-t border-white/10 pt-6">
-                    <button id="logoutBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition">Logout</button>
-                </div>
             </div>
+        </div>
+    </div>
+
+    <div id="investModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Start Investment</h3>
+                <button id="closeInvestModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <select id="investPlan" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-3">
+                <option value="7days-15">7 Days - 15% Profit</option>
+                <option value="14days-25">14 Days - 25% Profit</option>
+                <option value="30days-40">30 Days - 40% Profit</option>
+            </select>
+            <input type="number" id="investAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
+            <button id="submitInvest" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Invest Now</button>
+            <div id="investMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
+        </div>
+    </div>
+
+    <div id="withdrawModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8 max-h- overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Withdraw Investment</h3>
+                <button id="closeWithdrawModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <select id="withdrawSelect" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
+                <option>Loading...</option>
+            </select>
+
+            <div class="space-y-3">
+                <p class="text-sm text-gray-400">Enter bank details for payment</p>
+                <input type="text" id="bankName" placeholder="Bank Name" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
+                <input type="text" id="accountName" placeholder="Account Name" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
+                <input type="text" id="accountNumber" placeholder="Account Number" class="w-full bg-white/5 border-white/10 p-3 rounded-xl">
+            </div>
+
+            <button id="submitWithdraw" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl mt-4">Request Withdrawal</button>
+            <div id="withdrawMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
 
@@ -226,44 +272,21 @@
                 <h3 class="text-2xl font-bold">Request Top Up</h3>
                 <button id="closeTopupModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <p class="text-gray-400 text-sm mb-4">Pay to the account below, then submit this form. I’ll credit your balance manually within 2 hours.</p>
             <div class="bg-white/5 p-4 rounded-2xl mb-4 border-white/10">
                 <p class="text-xs text-gray-500">Bank: Opay</p>
                 <p class="text-lg font-bold">Account: 8141612736</p>
                 <p class="text-sm">Name: Okugbe Praise</p>
             </div>
             <input type="number" id="topupAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3">
-            <textarea id="topupNote" placeholder="Payment reference / note" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
+            <textarea id="topupNote" placeholder="Payment reference" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" rows="3"></textarea>
             <button id="submitTopup" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Submit Request</button>
-            <div id="topupMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
         </div>
     </div>
-
-    <div id="investModal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-[#0a0a0a] border-white/10 rounded-3xl max-w-md w-full p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">Invest</h3>
-                <button id="closeInvestModal" class="text-gray-500 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <select id="investPlan" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-3">
-                <option value="7days-15">7 Days - 15% Profit</option>
-                <option value="14days-25">14 Days - 25% Profit</option>
-                <option value="30days-40">30 Days - 40% Profit</option>
-            </select>
-            <input type="number" id="investAmount" placeholder="Amount in NGN" class="w-full bg-white/5 border-white/10 p-3 rounded-xl mb-4">
-            <button id="submitInvest" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Start Investment</button>
-            <div id="investMsg" class="hidden mt-3 p-3 rounded-xl text-sm"></div>
-        </div>
-    </div>
-
-    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-xs tracking-[0.2em] uppercase">
-        © 2026 HARPS TECH // CRAFTED WITH PRECISION
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -278,325 +301,328 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const rates = { NGN: 1, USD: 0.0012, EUR: 0.0011, GBP: 0.00095 };
-        const currencySymbols = { NGN: '₦', USD: '$', EUR: '€', GBP: '£' };
+        const rates = { NGN: 1, USD: 0.0012, EUR: 0.0011, GBP: 0.00095, CAD: 0.0016, AUD: 0.0018, KES: 0.17, GHS: 0.018, ZAR: 0.022, UGX: 4.5, TZS: 3.1, AED: 0.0044, SAR: 0.0045, BTC: 0.000018, ETH: 0.00045 };
+        const currencySymbols = { NGN: '₦', USD: '$', EUR: '€', GBP: '£', CAD: 'C$', AUD: 'A$', KES: 'KSh', GHS: '₵', ZAR: 'R', UGX: 'USh', TZS: 'TSh', AED: 'د.إ', SAR: '﷼', BTC: '₿', ETH: 'Ξ' };
 
         let currentUser = null;
         let userBalanceNGN = 0;
         let selectedCurrency = localStorage.getItem('currency') || 'NGN';
-        let allServices = [];
-        let chatUnsubscribe = null;
         let userData = {};
+        let chatUnsubscribe = null;
 
-        const userName = document.getElementById('userName');
-        const balanceEl = document.getElementById('balance');
         const currencySelect = document.getElementById('currencySelect');
         currencySelect.value = selectedCurrency;
 
-        function updateBalanceDisplay() {
-            const converted = userBalanceNGN * rates[selectedCurrency];
-            const symbol = currencySymbols[selectedCurrency];
-            balanceEl.textContent = `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        function formatCurrency(amount, currency) {
+            const rate = rates[currency] || 1;
+            const converted = amount * rate;
+            const symbol = currencySymbols[currency] || currency;
+            const decimals = ['BTC', 'ETH'].includes(currency)? 8 : 2;
+            return `${symbol}${converted.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})}`;
         }
 
-        async function setupUserExtras(user) {
+        function updateBalanceDisplay() {
+            const formatted = formatCurrency(userBalanceNGN, selectedCurrency);
+            document.getElementById('balance').textContent = formatted;
+            document.getElementById('balanceMain').textContent = formatted;
+        }
+
+        function getTimeRemaining(endTime) {
+            const total = endTime - new Date();
+            if (total <= 0) return { expired: true };
+            const days = Math.floor(total / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((total % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((total % (1000 * 60 * 60)) / (1000 * 60));
+            return { days, hours, minutes, expired: false };
+        }
+
+        async function loadUserData(user) {
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
-            
+
             if (userSnap.exists()) {
                 userData = userSnap.data();
                 userBalanceNGN = userData.balance || 0;
-                
+
                 if (!userData.referralCode) {
                     const code = 'HARPS-' + user.uid.substring(0, 8).toUpperCase();
                     await updateDoc(userRef, { referralCode: code });
                     userData.referralCode = code;
                 }
-                
-                document.getElementById('referralCode').textContent = userData.referralCode;
-                document.getElementById('refEarned').textContent = userData.refEarned || 0;
-                
-                const invQuery = query(collection(db, "investments"), where("uid", "==", user.uid), where("status", "==", "active"));
-                const invSnap = await getDocs(invQuery);
-                document.getElementById('activeInvest').textContent = invSnap.size;
+
+                document.getElementById('referralLink').textContent = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
+                document.getElementById('refEarned').textContent = formatCurrency(userData.refEarned || 0, selectedCurrency);
             }
             updateBalanceDisplay();
         }
 
-        document.getElementById('copyRefBtn').onclick = () => {
-            const link = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
-            navigator.clipboard.writeText(link);
-            alert('Referral link copied!');
+        async function loadInvestments() {
+            const q = query(collection(db, "investments"), where("uid", "==", currentUser.uid), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snap) => {
+                const active = snap.docs.filter(d => d.data().status === 'active').length;
+                document.getElementById('activeInvest').textContent = active;
+
+                document.getElementById('userInvestments').innerHTML = snap.docs.map(doc => {
+                    const d = doc.data();
+                    const startDate = d.timestamp?.toDate? d.timestamp.toDate() : new Date(d.timestamp);
+                    const planDays = d.plan.includes('7days')? 7 : d.plan.includes('14days')? 14 : 30;
+                    const endDate = new Date(startDate.getTime() + planDays * 24 * 60 * 60 * 1000);
+                    const timeLeft = getTimeRemaining(endDate);
+
+                    return `
+                        <div class="card">
+                            <div class="flex justify-between mb-2">
+                                <p class="font-bold">${d.plan}</p>
+                                <span class="text-xs px-2 py-1 rounded ${d.status === 'active'? 'bg-cyan-500/20 text-cyan-400' : 'bg-green-500/20 text-green-400'}">${d.status}</span>
+                            </div>
+                            <p>Amount: ₦${d.amount.toLocaleString()}</p>
+                            <p>Profit: ₦${d.profit.toLocaleString()}</p>
+                            <p class="text-sm text-gray-400">${timeLeft.expired? 'Matured' : `Ends in ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`}</p>
+                        </div>
+                    `;
+                }).join('') || '<p class="text-gray-400">No investments yet</p>';
+            });
+        }
+
+        async function loadTransactions() {
+            const ordersQuery = query(collection(db, "orders"), where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"));
+            const ordersSnap = await getDocs(ordersQuery);
+            document.getElementById('totalOrders').textContent = ordersSnap.size;
+
+            const withdrawQuery = query(collection(db, "withdraw_requests"), where("uid", "==", currentUser.uid), orderBy("requestedAt", "desc"));
+            const withdrawSnap = await getDocs(withdrawQuery);
+
+            const allTx = [
+               ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
+               ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
+            ].sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
+
+            document.getElementById('transactionsList').innerHTML = allTx.slice(0, 20).map(tx => `
+                <div class="card">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="font-bold">${tx.type === 'order'? tx.serviceName : 'Withdrawal Request'}</p>
+                            <p class="text-sm text-gray-400">${tx.type === 'order'? 'Service Order' : 'Investment Withdrawal'}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold">₦${(tx.totalPrice || tx.amount || 0).toLocaleString()}</p>
+                            <p class="text-xs ${tx.status === 'completed' || tx.status === 'approved'? 'text-green-400' : tx.status === 'pending'? 'text-yellow-400' : 'text-red-400'}">${tx.status}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-gray-400">No transactions yet</p>';
+        }
+
+        async function loadReferrals() {
+            const q = query(collection(db, "referrals"), where("referrerEmail", "==", currentUser.email), orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+            document.getElementById('referralHistory').innerHTML = snap.docs.map(d => {
+                const data = d.data();
+                return `
+                    <div class="card">
+                        <p class="font-bold">${data.referredEmail}</p>
+                        <p class="text-sm text-gray-400">Bonus: ₦${data.bonus}</p>
+                        <p class="text-xs ${data.status === 'paid'? 'text-green-400' : 'text-yellow-400'}">${data.status}</p>
+                    </div>
+                `;
+            }).join('') || '<p class="text-gray-400">No referrals yet</p>';
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tab = link.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById(`tab-${tab}`).classList.add('active');
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-white/5', 'text-cyan-400'));
+                link.classList.add('bg-white/5', 'text-cyan-400');
+            });
+        });
+
+        document.getElementById('withdrawInvBtn').onclick = async () => {
+            const q = query(collection(db, "investments"), where("uid", "==", currentUser.uid), where("status", "==", "active"));
+            const snap = await getDocs(q);
+            const select = document.getElementById('withdrawSelect');
+            select.innerHTML = snap.empty? '<option>No active investments</option>' :
+                snap.docs.map(d => `<option value="${d.id}">₦${d.data().amount} - ${d.data().plan}</option>`).join('');
+            document.getElementById('withdrawModal').classList.add('active');
         };
 
-        document.getElementById('investBtn').onclick = () => document.getElementById('investModal').classList.add('active');
-        document.getElementById('closeInvestModal').onclick = () => document.getElementById('investModal').classList.remove('active');
+        document.getElementById('submitWithdraw').onclick = async () => {
+            const invId = document.getElementById('withdrawSelect').value;
+            const bankName = document.getElementById('bankName').value.trim();
+            const accountName = document.getElementById('accountName').value.trim();
+            const accountNumber = document.getElementById('accountNumber').value.trim();
+
+            if (!invId ||!bankName ||!accountName ||!accountNumber) {
+                alert('Fill all bank details');
+                return;
+            }
+
+            const invSnap = await getDoc(doc(db, "investments", invId));
+            const invData = invSnap.data();
+            const total = invData.amount + invData.profit;
+
+            await addDoc(collection(db, "withdraw_requests"), {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                investmentId: invId,
+                amount: total,
+                principal: invData.amount,
+                profit: invData.profit,
+                bankDetails: { bankName, accountName, accountNumber },
+                status: 'pending',
+                requestedAt: new Date()
+            });
+
+            await updateDoc(doc(db, "investments", invId), { status: 'withdrawal_pending' });
+            alert('Withdrawal request sent! You will be paid manually.');
+            document.getElementById('withdrawModal').classList.remove('active');
+            location.reload();
+        };
 
         document.getElementById('submitInvest').onclick = async () => {
             const plan = document.getElementById('investPlan').value;
             const amount = parseFloat(document.getElementById('investAmount').value);
-            
-            if (!amount || amount > userBalanceNGN) {
-                document.getElementById('investMsg').textContent = 'Insufficient balance';
-                document.getElementById('investMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
-                return;
-            }
+            if (!amount || amount > userBalanceNGN) return alert('Insufficient balance');
 
             const profitRates = { '7days-15': 0.15, '14days-25': 0.25, '30days-40': 0.40 };
             const profit = amount * profitRates[plan];
 
             await addDoc(collection(db, "investments"), {
-                uid: currentUser.uid,
-                email: currentUser.email,
-                plan,
-                amount,
-                profit,
-                status: 'active',
-                timestamp: new Date()
+                uid: currentUser.uid, email: currentUser.email, plan, amount, profit,
+                status: 'active', timestamp: new Date()
             });
 
-            await updateDoc(doc(db, "users", currentUser.uid), { 
-                balance: userBalanceNGN - amount 
-            });
-
-            document.getElementById('investMsg').textContent = 'Investment started successfully!';
-            document.getElementById('investMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
-            setTimeout(() => location.reload(), 1500);
+            await updateDoc(doc(db, "users", currentUser.uid), { balance: userBalanceNGN - amount });
+            alert('Investment started!');
+            location.reload();
         };
 
-        async function loadServices() {
-            try {
-                const [snap1, snap2] = await Promise.all([
-                    getDoc(doc(db, 'config', 'services_part1')),
-                    getDoc(doc(db, 'config', 'services_part2'))
-                ]);
-
-                allServices = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
-                
-                if (allServices.length === 0) {
-                    document.getElementById('servicesCount').textContent = "No services found. Upload services in admin panel.";
-                    return;
-                }
-
-                document.getElementById('servicesCount').textContent = `${allServices.length} premium services available`;
-                renderServices(allServices);
-            } catch (err) {
-                console.error("Error loading services:", err);
-                document.getElementById('servicesCount').textContent = "Error loading services. Check console.";
-            }
-        }
-
-        function renderServices(services) {
-            const servicesGrid = document.getElementById('servicesGrid');
-            servicesGrid.innerHTML = '';
-            
-            services.forEach(service => {
-                if (service.available === false) return;
-
-                const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
-                const priceText = service.pricePerUnit ? `₦${service.pricePerUnit.toLocaleString()}/unit` : 'Custom Quote';
-                const img = service.image || 'https://via.placeholder.com/600x400/0a0a0a/00E8FF?text=Harps+Tech';
-
-                const card = document.createElement('div');
-                card.className = 'service-card rounded-3xl overflow-hidden group';
-                card.innerHTML = `
-                    <div class="relative h-48 overflow-hidden bg-black/50">
-                        <img src="${img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="${service.name}">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                        ${!isAuto ? '<span class="absolute top-4 right-4 text-xs bg-yellow-500/90 text-black px-3 py-1 rounded-full font-bold">Manual</span>' : ''}
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-bold text-lg leading-tight mb-1">${service.name}</h3>
-                        <p class="text-gray-500 text-xs mb-2">${service.category}</p>
-                        ${service.min ? `<p class="text-gray-500 text-xs mb-4">Min: ${service.min} | Max: ${service.max?.toLocaleString()}</p>` : ''}
-                        <div class="flex items-center justify-between">
-                            <div class="text-cyan-400 font-bold text-lg">${priceText}</div>
-                            <button class="bg-white text-black px-4 py-2 rounded-xl font-semibold text-sm order-btn" data-id="${service.id}">
-                                Order
-                            </button>
-                        </div>
-                    </div>
-                `;
-                servicesGrid.appendChild(card);
-            });
-
-            document.querySelectorAll('.order-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = e.currentTarget.getAttribute('data-id');
-                    const service = services.find(s => s.id === id);
-                    if (service) openOrderModal(service);
-                });
-            });
-
-            lucide.createIcons();
-        }
-
-        function openOrderModal(service) {
-            const orderModal = document.getElementById('orderModal');
-            document.getElementById('orderServiceName').textContent = service.name;
-            const isAuto = !service.id.startsWith('srv_') && !service.id.startsWith('dummy');
-            
-            const fieldsHtml = service.fields?.includes('link') ?
-                `<input type="url" id="orderLink" placeholder="Enter link/URL" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-3" required>` : '';
-
-            document.getElementById('orderFormContent').innerHTML = `
-                <p class="text-gray-400 text-sm mb-4">${service.category} • ${isAuto ? 'Auto Delivery' : 'Manual Delivery'}</p>
-                ${fieldsHtml}
-                ${service.fields?.includes('quantity') ?
-                `<input type="number" id="orderQty" placeholder="Quantity" min="${service.min}" max="${service.max}" class="w-full bg-white/5 border-white/10 p-3 rounded-xl focus:border-cyan-500 outline-none mb-4" required>` : ''}
-                <button id="submitOrder" class="w-full btn-premium text-black font-bold py-3 rounded-xl">Place Order</button>
-            `;
-
-            document.getElementById('submitOrder').onclick = () => submitOrder(service);
-            orderModal.classList.add('active');
-            lucide.createIcons();
-        }
-
-        async function submitOrder(service) {
-            const link = document.getElementById('orderLink')?.value || '';
-            const qty = document.getElementById('orderQty')?.value || 1;
+        document.getElementById('changePwBtn').onclick = async () => {
+            const currentPass = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const msgEl = document.getElementById('pwMsg');
 
             try {
-                await addDoc(collection(db, "orders"), {
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    serviceId: service.id,
-                    serviceName: service.name,
-                    link, 
-                    quantity: parseInt(qty),
-                    totalPrice: (service.pricePerUnit || 0) * parseInt(qty),
-                    status: 'pending',
-                    createdAt: new Date()
-                });
-
-                document.getElementById('orderMsg').textContent = 'Order placed! Check chat for updates.';
-                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
-                setTimeout(() => document.getElementById('orderModal').classList.remove('active'), 2000);
+                const credential = EmailAuthProvider.credential(currentUser.email, currentPass);
+                await reauthenticateWithCredential(currentUser, credential);
+                await updatePassword(currentUser, newPass);
+                msgEl.textContent = 'Password updated successfully!';
+                msgEl.className = 'mb-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
+                msgEl.classList.remove('hidden');
             } catch (err) {
-                document.getElementById('orderMsg').textContent = 'Error placing order.';
-                document.getElementById('orderMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                msgEl.textContent = 'Error: ' + err.message;
+                msgEl.className = 'mb-3 p-3 rounded-xl text-sm bg-red-900/30 text-red-400';
+                msgEl.classList.remove('hidden');
             }
-        }
-
-        document.getElementById('closeOrderModal').onclick = () => document.getElementById('orderModal').classList.remove('active');
-
-        const chatWidget = document.getElementById('chatWidget');
-        const chatOpenBtn = document.getElementById('chatOpenBtn');
-        const chatCloseBtn = document.getElementById('chatCloseBtn');
-        const chatInput = document.getElementById('chatInput');
-        const chatSendBtn = document.getElementById('chatSendBtn');
-        const chatMessages = document.getElementById('chatMessages');
-
-        chatOpenBtn.onclick = () => {
-            chatWidget.classList.remove('hidden');
-            chatWidget.classList.add('flex');
-            if (currentUser && !chatUnsubscribe) loadChatMessages();
         };
-        chatCloseBtn.onclick = () => {
-            chatWidget.classList.add('hidden');
+
+        async function sendChatMessage() {
+            const text = document.getElementById('chatInput').value.trim();
+            if (!text ||!currentUser) return;
+            await addDoc(collection(db, "chat_messages"), {
+                uid: currentUser.uid, email: currentUser.email, message: text,
+                sender: 'user', timestamp: new Date(), read: false
+            });
+            document.getElementById('chatInput').value = '';
+        }
+
+        function loadChatMessages() {
+            const q = query(collection(db, "chat_messages"), where("uid", "==", currentUser.uid), orderBy("timestamp", "asc"));
+            chatUnsubscribe = onSnapshot(q, (snapshot) => {
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+                let hasUnread = false;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isUser = data.sender === 'user';
+                    if (!isUser &&!data.read) hasUnread = true;
+                    chatMessages.innerHTML += `
+                        <div class="${isUser? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12 document.getElementById('chatSendBtn').onclick = sendChatMessage;
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+
+        // Modal controls
+        document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
+        document.getElementById('closeModal').onclick = () => document.getElementById('settingsModal').classList.remove('active');
+        document.getElementById('investBtn').onclick = () => document.getElementById('investModal').classList.add('active');
+        document.getElementById('closeInvestModal').onclick = () => document.getElementById('investModal').classList.remove('active');
+        document.getElementById('closeWithdrawModal').onclick = () => document.getElementById('withdrawModal').classList.remove('active');
+        document.getElementById('requestTopupBtn').onclick = () => document.getElementById('topupModal').classList.add('active');
+        document.getElementById('closeTopupModal').onclick = () => document.getElementById('topupModal').classList.remove('active');
+        document.getElementById('chatOpenBtn').onclick = () => {
+            document.getElementById('chatWidget').classList.remove('hidden');
+            document.getElementById('chatWidget').classList.add('flex');
+            if (currentUser &&!chatUnsubscribe) loadChatMessages();
+        };
+        document.getElementById('chatCloseBtn').onclick = () => {
+            document.getElementById('chatWidget').classList.add('hidden');
             if (chatUnsubscribe) chatUnsubscribe();
             chatUnsubscribe = null;
         };
 
-        async function sendChatMessage() {
-            const text = chatInput.value.trim();
-            if (!text || !currentUser) return;
+        // Mobile menu
+        document.getElementById('menuToggle').onclick = () => {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('sidebarOverlay').classList.remove('hidden');
+        };
+        document.getElementById('sidebarOverlay').onclick = () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        };
 
-            await addDoc(collection(db, "chat_messages"), {
-                uid: currentUser.uid,
-                email: currentUser.email,
-                message: text,
-                sender: 'user',
-                timestamp: new Date(),
-                read: false
-            });
-            chatInput.value = '';
-        }
-
-        function loadChatMessages() {
-            const q = query(
-                collection(db, "chat_messages"),
-                where("uid", "==", currentUser.uid),
-                orderBy("timestamp", "asc")
-            );
-            chatUnsubscribe = onSnapshot(q, (snapshot) => {
-                chatMessages.innerHTML = `<div class="chat-bubble bg-white/5 p-3 rounded-2xl text-sm">
-                    <p class="text-cyan-400 font-semibold mb-1">Harps Tech Support</p>
-                    <p>Hello! How can I help you today?</p>
-                </div>`;
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const isUser = data.sender === 'user';
-                    chatMessages.innerHTML += `
-                        <div class="chat-bubble ${isUser ? 'bg-cyan-500/20 ml-12' : 'bg-white/5 mr-12'} p-3 rounded-2xl text-sm">
-                            <p class="${isUser ? 'text-cyan-400' : 'text-gray-400'} font-semibold mb-1">${isUser ? 'You' : 'Support'}</p>
-                            <p>${data.message}</p>
-                        </div>
-                    `;
-                });
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            });
-        }
-
-        chatSendBtn.onclick = sendChatMessage;
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendChatMessage();
+        // Currency change
+        currencySelect.addEventListener('change', async (e) => {
+            selectedCurrency = e.target.value;
+            localStorage.setItem('currency', selectedCurrency);
+            updateBalanceDisplay();
+            document.getElementById('refEarned').textContent = formatCurrency(userData.refEarned || 0, selectedCurrency);
+            if (currentUser) {
+                await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
+            }
         });
 
+        // Topup request
+        document.getElementById('submitTopup').onclick = async () => {
+            const amount = document.getElementById('topupAmount').value;
+            const note = document.getElementById('topupNote').value;
+            if (!amount || amount <= 0) return alert('Enter valid amount');
+
+            await addDoc(collection(db, "topup_requests"), {
+                uid: currentUser.uid, email: currentUser.email, amount: parseFloat(amount),
+                note: note, status: 'pending', createdAt: new Date()
+            });
+
+            alert('Request sent! You’ll be credited after payment confirmation.');
+            document.getElementById('topupModal').classList.remove('active');
+        };
+
+        // Logout
+        const logout = async () => { await signOut(auth); window.location.href = "login.html"; };
+        document.getElementById('logoutBtnSidebar').onclick = logout;
+
+        // Auth state
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                userName.textContent = user.displayName || 'User';
-                await setupUserExtras(user);
-                loadServices();
+                document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+                await loadUserData(user);
+                loadInvestments();
+                loadTransactions();
+                loadReferrals();
+                loadChatMessages();
+                // loadServices() - call your existing service loader here
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        document.getElementById('submitTopup').onclick = async () => {
-            const amount = document.getElementById('topupAmount').value;
-            const note = document.getElementById('topupNote').value;
-            if (!amount || amount <= 0) return;
+        lucide.createIcons();
 
-            try {
-                await addDoc(collection(db, "topup_requests"), {
-                    uid: currentUser.uid,
-                    email: currentUser.email,
-                    amount: parseFloat(amount),
-                    note: note,
-                    status: 'pending',
-                    createdAt: new Date()
-                });
-
-                document.getElementById('topupMsg').textContent = 'Request sent! I’ll credit your account after confirming payment.';
-                document.getElementById('topupMsg').className = 'mt-3 p-3 rounded-xl text-sm bg-green-900/30 text-green-400';
-                document.getElementById('topupAmount').value = '';
-                document.getElementById('topupNote').value = '';
-            } catch (err) {
-                document.getElementById('topupMsg').textContent = 'Error sending request.';
-            }
-        };
-
-        document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
-        document.getElementById('closeModal').onclick = () => document.getElementById('settingsModal').classList.remove('active');
-        document.getElementById('requestTopupBtn').onclick = () => document.getElementById('topupModal').classList.add('active');
-        document.getElementById('closeTopupModal').onclick = () => document.getElementById('topupModal').classList.remove('active');
-        document.getElementById('logoutBtn').onclick = async () => { 
-        await signOut(auth); 
-        window.location.href = "login.html"; 
-    };
-
-    currencySelect.addEventListener('change', async (e) => {
-        selectedCurrency = e.target.value;
-        localStorage.setItem('currency', selectedCurrency);
-        updateBalanceDisplay();
-        if (currentUser) {
-            await updateDoc(doc(db, "users", currentUser.uid), { currency: selectedCurrency });
-        }
-    });
-
-    lucide.createIcons();
-</script>
+        // Update countdowns every 60s
+        setInterval(() => loadInvestments(), 60000);
+    </script>
 </body>
 </html>
