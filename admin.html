@@ -12,9 +12,11 @@ body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; }
 .btn { background: linear-gradient(90deg, #00E8FF, #0072FF); padding: 10px 20px; border-radius: 12px; font-weight: 600; color: #000; cursor: pointer; }
 .btn-red { background: #ef4444; padding: 8px 16px; border-radius: 10px; font-weight: 600; color: #fff; cursor: pointer; }
 .btn-green { background: #22c55e; padding: 8px 16px; border-radius: 10px; font-weight: 600; color: #fff; cursor: pointer; }
+.btn-orange { background: #f59e0b; padding: 8px 16px; border-radius: 10px; font-weight: 600; color: #fff; cursor: pointer; }
 input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; width: 100%; color: #fff; }
 .tab-btn { padding: 10px 16px; border-radius: 10px; background: rgba(255,255,255,0.05); cursor: pointer; white-space: nowrap; }
 .tab-btn.active { background: linear-gradient(90deg, #00E8FF, #0072FF); color: #000; font-weight: 600; }
+.countdown { font-family: monospace; font-size: 0.9rem; }
 </style>
 </head>
 <body class="p-4 md:p-6">
@@ -28,13 +30,14 @@ input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid 
     <h1 class="text-2xl md:text-3xl font-bold">Harps Tech Admin</h1>
     <button onclick="logout()" class="btn-red">Logout</button>
   </div>
-  
+
   <div class="flex gap-3 mb-6 overflow-x-auto pb-2">
     <button onclick="showTab('dashboard')" class="tab-btn active">Dashboard</button>
     <button onclick="showTab('users')" class="tab-btn">Users</button>
     <button onclick="showTab('orders')" class="tab-btn">Orders</button>
     <button onclick="showTab('topup')" class="tab-btn">Top-ups</button>
     <button onclick="showTab('invest')" class="tab-btn">Investments</button>
+    <button onclick="showTab('withdrawals')" class="tab-btn">Withdrawals</button>
     <button onclick="showTab('refer')" class="tab-btn">Referrals</button>
     <button onclick="showTab('services')" class="tab-btn">Services</button>
     <button onclick="showTab('chat')" class="tab-btn">Chat</button>
@@ -47,7 +50,7 @@ input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid 
       <div class="card"><p class="text-gray-400">Total Users</p><p id="statUsers" class="text-3xl font-bold">0</p></div>
       <div class="card"><p class="text-gray-400">Total Orders</p><p id="statOrders" class="text-3xl font-bold">0</p></div>
       <div class="card"><p class="text-gray-400">Revenue</p><p id="statRevenue" class="text-3xl font-bold">₦0</p></div>
-      <div class="card"><p class="text-gray-400">Pending Top-ups</p><p id="statTopups" class="text-3xl font-bold">0</p></div>
+      <div class="card"><p class="text-gray-400">Pending Withdrawals</p><p id="statWithdrawals" class="text-3xl font-bold">0</p></div>
     </div>
     <div class="card">
       <h3 class="font-bold mb-4">Recent Orders</h3>
@@ -80,6 +83,11 @@ input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid 
   <!-- Investments Tab -->
   <div id="tab-invest" class="tab hidden">
     <div id="investList" class="space-y-4"></div>
+  </div>
+
+  <!-- Withdrawals Tab -->
+  <div id="tab-withdrawals" class="tab hidden">
+    <div id="withdrawList" class="space-y-4"></div>
   </div>
 
   <!-- Referrals Tab -->
@@ -132,21 +140,31 @@ let currentUser = null;
 let allUsers = [];
 let allOrders = [];
 
+function getTimeRemaining(endTime) {
+    const total = endTime - new Date();
+    if (total <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((total % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((total % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((total % (1000 * 60)) / 1000);
+    return { days, hours, minutes, seconds, expired: false };
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html?redirect=admin.html";
     return;
   }
-  
+
   currentUser = user;
-  
-  if (user.email.toLowerCase().trim() !== OWNER_EMAIL.toLowerCase().trim()) {
-    document.getElementById('loginCheck').innerHTML = 
+
+  if (user.email.toLowerCase().trim()!== OWNER_EMAIL.toLowerCase().trim()) {
+    document.getElementById('loginCheck').innerHTML =
       `<h2 class='text-red-500'>Access Denied. Not owner.</h2>
        <p class='text-gray-400 mt-2'>Logged in as: ${user.email}</p>`;
     return;
   }
-  
+
   document.getElementById('loginCheck').classList.add('hidden');
   document.getElementById('adminPanel').classList.remove('hidden');
   loadDashboard();
@@ -154,6 +172,7 @@ onAuthStateChanged(auth, async (user) => {
   loadOrders();
   loadTopups();
   loadInvestments();
+  loadWithdrawals();
   loadReferrals();
   loadServices();
   loadChats();
@@ -170,15 +189,16 @@ async function loadDashboard() {
   const usersSnap = await getDocs(collection(db, "users"));
   const ordersSnap = await getDocs(collection(db, "orders"));
   const topupsSnap = await getDocs(query(collection(db, "topup_requests"), where("status", "==", "pending")));
-  
-  allUsers = usersSnap.docs.map(d => ({id: d.id, ...d.data()}));
-  allOrders = ordersSnap.docs.map(d => ({id: d.id, ...d.data()}));
-  
+  const withdrawalsSnap = await getDocs(query(collection(db, "withdraw_requests"), where("status", "==", "pending")));
+
+  allUsers = usersSnap.docs.map(d => ({id: d.id,...d.data()}));
+  allOrders = ordersSnap.docs.map(d => ({id: d.id,...d.data()}));
+
   document.getElementById('statUsers').textContent = allUsers.length;
   document.getElementById('statOrders').textContent = allOrders.length;
   document.getElementById('statRevenue').textContent = `₦${allOrders.reduce((sum, o) => sum + (o.totalPrice || o.amount || 0), 0).toLocaleString()}`;
-  document.getElementById('statTopups').textContent = topupsSnap.size;
-  
+  document.getElementById('statWithdrawals').textContent = withdrawalsSnap.size;
+
   document.getElementById('recentOrders').innerHTML = allOrders.slice(0, 5).map(o => `
     <div class="flex justify-between text-sm">
       <span>${o.userEmail || o.email}</span>
@@ -193,7 +213,7 @@ function loadUsers() {
       <div class="flex justify-between items-start">
         <div>
           <p class="font-bold">${u.email}</p>
-          <p class="text-sm text-gray-400">Balance: ₦${u.balance || 0}</p>
+          <p class="text-sm text-gray-400">Balance: ₦${(u.balance || 0).toLocaleString()}</p>
           <p class="text-sm text-gray-400">Referral Code: ${u.referralCode || 'N/A'}</p>
           <p class="text-sm text-gray-400">Referred By: ${u.referredBy || 'None'}</p>
         </div>
@@ -211,7 +231,7 @@ window.filterUsers = () => {
       <div class="flex justify-between items-start">
         <div>
           <p class="font-bold">${u.email}</p>
-          <p class="text-sm text-gray-400">Balance: ₦${u.balance || 0}</p>
+          <p class="text-sm text-gray-400">Balance: ₦${(u.balance || 0).toLocaleString()}</p>
         </div>
         <button onclick="editBalance('${u.id}', ${u.balance || 0})" class="btn">Edit Balance</button>
       </div>
@@ -221,7 +241,7 @@ window.filterUsers = () => {
 
 window.editBalance = async (uid, current) => {
   const newBal = prompt(`Current balance: ₦${current}\nEnter new balance:`);
-  if (newBal !== null && !isNaN(newBal)) {
+  if (newBal!== null &&!isNaN(newBal)) {
     await updateDoc(doc(db, "users", uid), { balance: parseFloat(newBal) });
     alert("Balance updated!");
     location.reload();
@@ -232,10 +252,10 @@ window.manualTopup = async () => {
   const email = document.getElementById('manualEmail').value.trim();
   const amount = parseFloat(document.getElementById('manualAmount').value);
   if (!email || isNaN(amount)) return alert("Enter valid email and amount");
-  
+
   const userDoc = allUsers.find(u => u.email === email);
   if (!userDoc) return alert("User not found");
-  
+
   const newBal = (userDoc.balance || 0) + amount;
   await updateDoc(doc(db, "users", userDoc.id), { balance: newBal });
   alert(`Credited ₦${amount} to ${email}`);
@@ -247,12 +267,12 @@ window.manualTopup = async () => {
 function loadOrders() {
   const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
   onSnapshot(q, (snap) => {
-    allOrders = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    allOrders = snap.docs.map(d => ({id: d.id,...d.data()}));
     document.getElementById('ordersList').innerHTML = allOrders.map(o => `
       <div class="card">
         <p class="font-bold">${o.serviceName || 'Service'}</p>
         <p class="text-sm">User: ${o.userEmail || o.email}</p>
-        <p class="text-sm">Amount: ₦${o.totalPrice || o.amount || 0}</p>
+        <p class="text-sm">Amount: ₦${(o.totalPrice || o.amount || 0).toLocaleString()}</p>
         <p class="text-sm">Status: <span class="font-bold">${o.status}</span></p>
         <div class="flex gap-2 mt-3">
           <select id="status-${o.id}" class="flex-1">
@@ -277,20 +297,17 @@ window.updateOrderStatus = async (id) => {
 function loadTopups() {
   const q = query(collection(db, "topup_requests"), where("status", "==", "pending"), orderBy("createdAt", "desc"));
   onSnapshot(q, (snap) => {
-    document.getElementById('statTopups').textContent = snap.size;
-    
     if (snap.empty) {
       document.getElementById('topupList').innerHTML = '<p class="text-gray-400">No pending top-ups</p>';
       return;
     }
-    
     document.getElementById('topupList').innerHTML = snap.docs.map(doc => {
       const d = doc.data();
-      const date = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString() : 'N/A';
+      const date = d.createdAt?.toDate? d.createdAt.toDate().toLocaleString() : 'N/A';
       return `
         <div class="card">
           <p class="font-bold">${d.email}</p>
-          <p>Amount: ₦${d.amount}</p>
+          <p>Amount: ₦${d.amount.toLocaleString()}</p>
           <p class="text-sm text-gray-400">${d.note || 'No note'}</p>
           <p class="text-xs text-gray-500">${date}</p>
           <div class="flex gap-2 mt-3">
@@ -307,20 +324,18 @@ window.approveTopup = async (reqId, uid, amount) => {
   const userRef = doc(db, "users", uid);
   const userSnap = await getDoc(userRef);
   const currentBalance = userSnap.data()?.balance || 0;
-  
+
   await updateDoc(userRef, { balance: currentBalance + amount });
-  await updateDoc(doc(db, "topup_requests", reqId), { 
-    status: "approved",
-    approvedAt: new Date()
+  await updateDoc(doc(db, "topup_requests", reqId), {
+    status: "approved", approvedAt: new Date()
   });
   alert(`Credited ₦${amount} successfully!`);
   location.reload();
 }
 
 window.declineTopup = async (reqId) => {
-  await updateDoc(doc(db, "topup_requests", reqId), { 
-    status: "declined",
-    declinedAt: new Date()
+  await updateDoc(doc(db, "topup_requests", reqId), {
+    status: "declined", declinedAt: new Date()
   });
   alert("Declined!");
   location.reload();
@@ -331,15 +346,39 @@ function loadInvestments() {
   onSnapshot(q, (snap) => {
     document.getElementById('investList').innerHTML = snap.docs.map(doc => {
       const d = doc.data();
+      const startDate = d.timestamp?.toDate? d.timestamp.toDate() : new Date(d.timestamp);
+      const planDays = d.plan.includes('7days')? 7 : d.plan.includes('14days')? 14 : 30;
+      const endDate = new Date(startDate.getTime() + planDays * 24 * 60 * 60 * 1000);
+      const timeLeft = getTimeRemaining(endDate);
+
+      let statusColor = 'text-yellow-400';
+      if (d.status === 'completed') statusColor = 'text-green-400';
+      if (d.status === 'withdrawal_pending') statusColor = 'text-orange-400';
+      if (timeLeft.expired && d.status === 'active') statusColor = 'text-red-400';
+
       return `
-        <div class="card">
-          <p class="font-bold">${d.email}</p>
-          <p>Plan: ${d.plan}</p>
-          <p>Amount: ₦${d.amount}</p>
-          <p>Profit: ₦${d.profit || 0}</p>
-          <p>Status: <span class="font-bold">${d.status}</span></p>
-          <div class="flex gap-2 mt-3">
-            ${d.status === 'active' ? `<button onclick="payProfit('${doc.id}', '${d.uid}', ${d.profit})" class="btn-green">Pay Profit</button>` : ''}
+        <div class="card" id="inv-${doc.id}">
+          <div class="flex justify-between items-start mb-2">
+            <p class="font-bold">${d.email}</p>
+            <span class="text-xs px-2 py-1 rounded ${statusColor} bg-white/5">${d.status}</span>
+          </div>
+          <p>Plan: ${d.plan} (${planDays} days)</p>
+          <p>Amount: ₦${d.amount.toLocaleString()}</p>
+          <p>Profit: ₦${d.profit.toLocaleString()}</p>
+          <p>Total Payout: ₦${(d.amount + d.profit).toLocaleString()}</p>
+          <p class="text-sm text-gray-400">Started: ${startDate.toLocaleString()}</p>
+          <p class="countdown font-bold ${timeLeft.expired? 'text-red-400' : 'text-cyan-400'}"
+             data-end="${endDate.getTime()}">
+            ${timeLeft.expired? 'Matured' : `Time Left: ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`}
+          </p>
+
+          <div class="flex gap-2 mt-3 flex-wrap">
+            ${d.status === 'active' && timeLeft.expired?
+              `<button onclick="payProfit('${doc.id}', '${d.uid}', ${d.profit}, ${d.amount})" class="btn-green">Pay Profit + Principal</button>` : ''}
+
+            ${d.status === 'withdrawal_pending'?
+              `<button onclick="approveWithdrawal('${doc.id}', '${d.uid}', ${d.amount + d.profit})" class="btn-green">Approve Withdrawal</button>
+               <button onclick="rejectWithdrawal('${doc.id}')" class="btn-red">Reject</button>` : ''}
           </div>
         </div>
       `
@@ -347,15 +386,89 @@ function loadInvestments() {
   });
 }
 
-window.payProfit = async (invId, uid, profit) => {
-  const userRef = doc(db, "users", uid);
-  const userSnap = await getDoc(userRef);
-  const currentBalance = userSnap.data()?.balance || 0;
-  
-  await updateDoc(userRef, { balance: currentBalance + profit });
-  await updateDoc(doc(db, "investments", invId), { status: "completed", paidAt: new Date() });
-  alert("Profit paid!");
-  location.reload();
+function loadWithdrawals() {
+  const q = query(collection(db, "withdraw_requests"), orderBy("requestedAt", "desc"));
+  onSnapshot(q, (snap) => {
+    document.getElementById('withdrawList').innerHTML = snap.docs.map(doc => {
+      const d = doc.data();
+      const date = d.requestedAt?.toDate? d.requestedAt.toDate().toLocaleString() : 'N/A';
+      const bank = d.bankDetails || {};
+
+      return `
+        <div class="card">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <p class="font-bold">${d.email}</p>
+              <p class="text-sm text-gray-400">Amount: ₦${d.amount.toLocaleString()}</p>
+              <p class="text-sm">Principal: ₦${d.principal.toLocaleString()} | Profit: ₦${d.profit.toLocaleString()}</p>
+            </div>
+            <span class="text-xs px-2 py-1 rounded ${d.status === 'pending'? 'bg-yellow-500/20 text-yellow-400' : d.status === 'approved'? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">${d.status}</span>
+          </div>
+
+          <div class="bg-black/30 p-3 rounded-xl mb-3">
+            <p class="text-xs text-gray-500 uppercase mb-1">Bank Details</p>
+            <p class="text-sm"><span class="text-gray-400">Bank:</span> ${bank.bankName || 'N/A'}</p>
+            <p class="text-sm"><span class="text-gray-400">Account Name:</span> ${bank.accountName || 'N/A'}</p>
+            <p class="text-sm"><span class="text-gray-400">Account No:</span> ${bank.accountNumber || 'N/A'}</p>
+          </div>
+
+          <p class="text-xs text-gray-500">Requested: ${date}</p>
+
+          ${d.status === 'pending'? `
+          <div class="flex gap-2 mt-3">
+            <button onclick="approveWithdrawal('${d.investmentId}', '${d.uid}', ${d.amount})" class="btn-green">Approve & Mark Paid</button>
+            <button onclick="rejectWithdrawal('${d.investmentId}')" class="btn-red">Reject</button>
+          </div>` : ''}
+        </div>
+      `
+    }).join('') || '<p class="text-gray-400">No withdrawal requests yet</p>';
+  });
+}
+
+window.payProfit = async (invId, uid, profit, principal) => {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+    const currentBalance = userSnap.data()?.balance || 0;
+
+    await updateDoc(userRef, { balance: currentBalance + profit + principal });
+    await updateDoc(doc(db, "investments", invId), {
+        status: "completed", paidAt: new Date()
+    });
+    alert(`Paid ₦${profit + principal} to user!`);
+}
+
+window.approveWithdrawal = async (invId, uid, amount) => {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+    const currentBalance = userSnap.data()?.balance || 0;
+
+    await updateDoc(userRef, { balance: currentBalance + amount });
+    await updateDoc(doc(db, "investments", invId), {
+        status: "withdrawn", withdrawnAt: new Date()
+    });
+
+    const wrQuery = query(collection(db, "withdraw_requests"), where("investmentId", "==", invId));
+    const wrSnap = await getDocs(wrQuery);
+    if (!wrSnap.empty) {
+        await updateDoc(doc(db, "withdraw_requests", wrSnap.docs[0].id), {
+            status: "approved", approvedAt: new Date()
+        });
+    }
+
+    alert(`Withdrawal of ₦${amount} approved and paid!`);
+}
+
+window.rejectWithdrawal = async (invId) => {
+    await updateDoc(doc(db, "investments", invId), { status: "active" });
+
+    const wrQuery = query(collection(db, "withdraw_requests"), where("investmentId", "==", invId));
+    const wrSnap = await getDocs(wrQuery);
+    if (!wrSnap.empty) {
+        await updateDoc(doc(db, "withdraw_requests", wrSnap.docs[0].id), {
+            status: "rejected", rejectedAt: new Date()
+        });
+    }
+    alert("Withdrawal rejected. Investment is active again.");
 }
 
 function loadReferrals() {
@@ -378,14 +491,14 @@ function loadReferrals() {
 async function loadServices() {
   const snap1 = await getDoc(doc(db, 'config', 'services_part1'));
   const snap2 = await getDoc(doc(db, 'config', 'services_part2'));
-  const services = [...(snap1.data()?.list || []), ...(snap2.data()?.list || [])];
-  
+  const services = [...(snap1.data()?.list || []),...(snap2.data()?.list || [])];
+
   document.getElementById('servicesList').innerHTML = services.map((s) => `
     <div class="card">
       <p class="font-bold">${s.name}</p>
       <p>Price: ₦${s.pricePerUnit}</p>
       <p>Category: ${s.category}</p>
-      <p>Available: ${s.available ? 'Yes' : 'No'}</p>
+      <p>Available: ${s.available? 'Yes' : 'No'}</p>
     </div>
   `).join('') || '<p class="text-gray-400">No services found</p>';
 }
@@ -399,7 +512,7 @@ function loadChats() {
       if (!users[data.uid]) users[data.uid] = {email: data.email, messages: []};
       users[data.uid].messages.push(data);
     });
-    
+
     document.getElementById('chatUsers').innerHTML = Object.keys(users).map(uid => `
       <div class="card">
         <p class="font-bold">${users[uid].email}</p>
@@ -434,6 +547,20 @@ window.logout = async () => {
   await signOut(auth);
   window.location.href = "login.html";
 }
+
+// Update countdowns every second
+setInterval(() => {
+  document.querySelectorAll('.countdown[data-end]').forEach(el => {
+    const endTime = parseInt(el.dataset.end);
+    const timeLeft = getTimeRemaining(new Date(endTime));
+    if (timeLeft.expired) {
+      el.textContent = 'Matured';
+      el.className = 'countdown font-bold text-red-400';
+    } else {
+      el.textContent = `Time Left: ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`;
+    }
+  });
+}, 1000);
 </script>
 </body>
 </html>
