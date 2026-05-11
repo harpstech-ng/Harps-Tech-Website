@@ -279,6 +279,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, orderBy, onSnapshot, getDocs, runTransaction, deleteDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { increment } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5BIEikFvCT6rZ3bPC2Q4zjSBXkd_5BNQ",
@@ -349,10 +350,63 @@
                     userData.referralCode = code;
                 }
                 const baseUrl = "https://harpstech-ng.github.io/Harps-Tech-Website";
-document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?ref=${userData.referralCode}`;
+                document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?ref=${userData.referralCode}`;
                 document.getElementById('refEarned').textContent = formatCurrency(userData.refEarned || 0, selectedCurrency);
             }
             updateBalanceDisplay();
+        }
+
+        // NEW: Pay referral bonus when first top-up is approved
+        async function checkAndPayReferralBonus() {
+            if (!currentUser) return;
+
+            const userRef = doc(db, "users", currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+
+            // Only pay if user was referred and bonus not paid yet
+            if (userData.referredBy && !userData.bonusPaid) {
+                // Check if user has any approved top-up
+                const topupQuery = query(
+                    collection(db, "topup_requests"), 
+                    where("uid", "==", currentUser.uid),
+                    where("status", "==", "approved")
+                );
+                const topupSnap = await getDocs(topupQuery);
+
+                if (!topupSnap.empty) {
+                    // Find the referrer by referralCode
+                    const refQuery = query(collection(db, "users"), where("referralCode", "==", userData.referredBy));
+                    const refSnap = await getDocs(refQuery);
+
+                    if (!refSnap.empty) {
+                        const referrerDoc = refSnap.docs[0];
+
+                        // Pay ₦500 to referrer
+                        await updateDoc(referrerDoc.ref, {
+                            balance: increment(500),
+                            refEarned: increment(500)
+                        });
+
+                        // Pay ₦200 to new user
+                        await updateDoc(userRef, {
+                            balance: increment(200),
+                            bonusPaid: true
+                        });
+
+                        // Mark referral as paid
+                        const refDocQuery = query(collection(db, "referrals"), where("referredUid", "==", currentUser.uid));
+                        const refDocSnap = await getDocs(refDocQuery);
+                        if (!refDocSnap.empty) {
+                            await updateDoc(refDocSnap.docs[0].ref, { status: "paid" });
+                        }
+
+                        console.log("Referral bonus paid!");
+                        // Reload user data to update UI
+                        await loadUserData(currentUser);
+                    }
+                }
+            }
         }
 
         async function loadServices() {
@@ -512,8 +566,8 @@ document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?re
             const withdrawSnap = await getDocs(withdrawQuery);
 
             const allTx = [
-              ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
-              ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
+             ...ordersSnap.docs.map(d => ({...d.data(), type: 'order', date: d.data().createdAt})),
+             ...withdrawSnap.docs.map(d => ({...d.data(), type: 'withdrawal', date: d.data().requestedAt}))
             ].sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
 
             document.getElementById('transactionsList').innerHTML = allTx.slice(0, 20).map(tx => `
@@ -533,7 +587,7 @@ document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?re
         }
 
         async function loadReferrals() {
-            const q = query(collection(db, "referrals"), where("referrerEmail", "==", currentUser.email), orderBy("timestamp", "desc"));
+            const q = query(collection(db, "referrals"), where("referrerCode", "==", userData.referralCode), orderBy("timestamp", "desc"));
             const snap = await getDocs(q);
             document.getElementById('referralHistory').innerHTML = snap.docs.map(d => {
                 const data = d.data();
@@ -606,7 +660,7 @@ document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?re
             if (!amount || amount > userBalanceNGN) return alert('Insufficient balance');
 
             const profitRates = { '7days-15': 0.15, '14days-25': 0.25, '30days-40': 0.40 };
-            const profit = amount * profitRates;
+            const profit = amount * profitRates[plan];
 
             await addDoc(collection(db, "investments"), {
                 uid: currentUser.uid,
@@ -760,6 +814,7 @@ document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?re
                 currentUser = user;
                 document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
                 await loadUserData(user);
+                await checkAndPayReferralBonus();
                 loadServices();
                 loadInvestments();
                 loadTransactions();
