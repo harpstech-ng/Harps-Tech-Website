@@ -348,7 +348,8 @@
                     await updateDoc(userRef, { referralCode: code });
                     userData.referralCode = code;
                 }
-                document.getElementById('referralLink').textContent = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
+                const baseUrl = "https://harpstech-ng.github.io/Harps-Tech-Website";
+document.getElementById('referralLink').textContent = `${baseUrl}/signup.html?ref=${userData.referralCode}`;
                 document.getElementById('refEarned').textContent = formatCurrency(userData.refEarned || 0, selectedCurrency);
             }
             updateBalanceDisplay();
